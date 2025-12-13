@@ -698,7 +698,7 @@
       "Test maximum precision",
       "Handle zero correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 52,
@@ -710,7 +710,7 @@
       "Handle nonce reuse error",
       "Test nonce format"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 53,
@@ -731,7 +731,7 @@
       "Free secure buffer memory",
       "Verify key bytes not recoverable"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 54,
@@ -743,7 +743,7 @@
       "Derive address",
       "Verify checksummed address"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 55,
@@ -755,7 +755,7 @@
       "Format for API approval",
       "Return key securely"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 56,
@@ -767,7 +767,7 @@
       "Verify output length 32",
       "Test incremental hashing"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 57,
@@ -779,7 +779,7 @@
       "Reject tampered message",
       "Reject wrong key"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 58,
@@ -791,7 +791,7 @@
       "Hash type string",
       "Use in struct hash"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 59,
@@ -803,7 +803,7 @@
       "Set wei amount",
       "Sign correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 60,
@@ -815,7 +815,7 @@
       "Set threshold",
       "Sign with owner key"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 61,
