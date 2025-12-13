@@ -1144,7 +1144,7 @@
       "Check slice details",
       "Verify fill prices"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 87,
@@ -1156,7 +1156,7 @@
       "Check equity amounts",
       "Verify vault addresses"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 88,
@@ -1168,7 +1168,7 @@
       "Check permissions",
       "Verify account status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 89,
@@ -1180,7 +1180,7 @@
       "Check remaining quota",
       "Verify reset time"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 90,
@@ -1192,7 +1192,7 @@
       "Check agent names",
       "Verify permissions"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 91,
@@ -1228,7 +1228,7 @@
       "Check referral stats",
       "Verify rewards"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 94,
@@ -1240,7 +1240,7 @@
       "Check sub-account names",
       "Verify balances"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 95,
@@ -1252,7 +1252,7 @@
       "Check threshold",
       "Verify signer addresses"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 96,
@@ -1263,7 +1263,7 @@
       "Parse DEX abstraction status",
       "Check enabled flag"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 97,
@@ -1275,7 +1275,7 @@
       "Check deployment status",
       "Verify token details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 98,
@@ -1287,7 +1287,7 @@
       "Check deployment queue",
       "Verify gas costs"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 99,
@@ -1301,7 +1301,7 @@
       "Wait for TTL expiry",
       "Verify refresh"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 100,
@@ -1313,7 +1313,7 @@
       "Verify meta updated",
       "Check no user request needed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 101,
@@ -1344,7 +1344,7 @@
       "Verify immediate fill or cancel",
       "Check response status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 103,
@@ -1356,7 +1356,7 @@
       "Verify resting in book",
       "Check maker status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 104,
@@ -1368,7 +1368,7 @@
       "Verify only reduces",
       "Test with no position fails"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 105,
@@ -1380,7 +1380,7 @@
       "Verify cloid in response",
       "Query by cloid works"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 106,
@@ -1393,7 +1393,7 @@
       "Submit with builder",
       "Verify fee applied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 107,
@@ -1413,7 +1413,7 @@
       "Verify all orders resting in book",
       "Cancel all orders to cleanup"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 108,
@@ -1425,7 +1425,7 @@
       "Test positionTpsl grouping",
       "Verify grouping behavior"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 109,
@@ -1438,7 +1438,7 @@
       "Set new price",
       "Verify modification"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 110,
@@ -1450,7 +1450,7 @@
       "Verify size changed",
       "Check price unchanged"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 111,
@@ -1462,7 +1462,7 @@
       "Call bulk_modify()",
       "Verify all modified"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 112,
@@ -1481,7 +1481,7 @@
       "Calculate effective slippage",
       "Close position to cleanup"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 113,
@@ -1494,7 +1494,7 @@
       "Verify position closed",
       "Check fill details"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 114,
@@ -1507,7 +1507,7 @@
       "Verify cancellation",
       "Check order status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 115,
@@ -1519,7 +1519,7 @@
       "Verify cancellation",
       "Check no longer active"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 116,
@@ -1531,7 +1531,7 @@
       "Call bulk_cancel()",
       "Verify all cancelled"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 117,
@@ -1542,7 +1542,7 @@
       "Call bulk_cancel_by_cloid()",
       "Verify all cancelled"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 118,
@@ -1555,7 +1555,7 @@
       "Wait for trigger",
       "Check orders cancelled"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 119,
@@ -1567,7 +1567,7 @@
       "Call update_leverage()",
       "Verify leverage changed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 120,
@@ -1579,7 +1579,7 @@
       "Add margin amount",
       "Verify margin increased"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 121,
@@ -1598,7 +1598,7 @@
       "Check transaction in ledger updates",
       "Verify transfer appears in user_fills"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 122,
@@ -1610,7 +1610,7 @@
       "Call spot_transfer()",
       "Verify token transferred"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 123,
@@ -1622,7 +1622,7 @@
       "Call usd_class_transfer()",
       "Verify funds moved"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 124,
@@ -1634,7 +1634,7 @@
       "Call send_asset()",
       "Verify transfer complete"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 125,
@@ -1647,7 +1647,7 @@
       "Call vault_usd_transfer()",
       "Verify deposited"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 126,
@@ -1660,7 +1660,7 @@
       "Call vault_usd_transfer()",
       "Verify withdrawn"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 127,
@@ -1673,7 +1673,7 @@
       "Call sub_account_transfer()",
       "Verify transferred"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 128,
@@ -1685,7 +1685,7 @@
       "Call sub_account_spot_transfer()",
       "Verify token moved"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 129,
@@ -1697,7 +1697,7 @@
       "Call withdraw_from_bridge()",
       "Verify withdrawal initiated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 130,
@@ -1709,7 +1709,7 @@
       "Verify agent authorized",
       "Test agent can trade"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 131,
@@ -1721,7 +1721,7 @@
       "Verify named agent created",
       "Check extra_agents lists it"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 132,
@@ -1733,7 +1733,7 @@
       "Call approve_builder_fee()",
       "Verify approval"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 133,
@@ -1745,7 +1745,7 @@
       "Verify referrer set",
       "Check referral state"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 134,
@@ -1757,7 +1757,7 @@
       "Verify sub-account created",
       "Check in sub_accounts list"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 135,
@@ -1777,7 +1777,7 @@
       "Verify action executes successfully",
       "Test 3 signatures also works"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 136,
@@ -1790,7 +1790,7 @@
       "Verify execution",
       "Check threshold satisfied"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 137,
@@ -1803,7 +1803,7 @@
       "Call token_delegate()",
       "Verify delegation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 138,
@@ -1815,7 +1815,7 @@
       "Call token_delegate()",
       "Verify undelegation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 139,
@@ -1826,7 +1826,7 @@
       "Verify enabled for agent",
       "Check DEX abstraction state"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 140,
@@ -1838,7 +1838,7 @@
       "Call user_dex_abstraction()",
       "Verify state changed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 141,
@@ -1852,7 +1852,7 @@
       "Call spot_deploy_register_token()",
       "Verify registration"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 142,
@@ -1864,7 +1864,7 @@
       "Call spot_deploy_user_genesis()",
       "Verify allocation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 143,
@@ -1876,7 +1876,7 @@
       "Set no_hyperliquidity",
       "Call spot_deploy_genesis()"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 144,
@@ -1888,7 +1888,7 @@
       "Call spot_deploy_register_spot()",
       "Verify pair created"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 145,
@@ -1900,7 +1900,7 @@
       "Set order parameters",
       "Call register_hyperliquidity()"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 146,
@@ -1913,7 +1913,7 @@
       "Set margin_table_id",
       "Call perp_deploy_register_asset()"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 147,
@@ -1925,7 +1925,7 @@
       "Set mark_pxs",
       "Call perp_deploy_set_oracle()"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 148,
@@ -1936,7 +1936,7 @@
       "Call c_signer_unjail_self()",
       "Verify unjailed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 149,
@@ -1948,7 +1948,7 @@
       "Set commission_bps",
       "Call c_validator_register()"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 150,
@@ -1959,7 +1959,7 @@
       "Call use_big_blocks()",
       "Verify EVM setting changed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 151,
@@ -1979,7 +1979,7 @@
       "Unsubscribe from channel",
       "Verify no more updates received"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 152,
@@ -1999,7 +1999,7 @@
       "Check spread is positive",
       "Unsubscribe and cleanup"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 153,
@@ -2012,7 +2012,7 @@
       "Verify price/size/side",
       "Check timestamp format"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 154,
@@ -2024,7 +2024,7 @@
       "Receive best bid/offer",
       "Verify spread calculation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 155,
@@ -2036,7 +2036,7 @@
       "Receive candle updates",
       "Verify OHLCV data"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 156,
@@ -2049,7 +2049,7 @@
       "Receive order updates",
       "Verify user-specific data"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 157,
@@ -2061,7 +2061,7 @@
       "Place order that fills",
       "Receive fill notification"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 158,
@@ -2073,7 +2073,7 @@
       "Place and cancel order",
       "Receive status updates"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 159,
@@ -2085,7 +2085,7 @@
       "Wait for funding event",
       "Receive funding notification"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 160,
@@ -2097,7 +2097,7 @@
       "Trigger ledger update",
       "Receive notification"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 161,
@@ -2109,7 +2109,7 @@
       "Receive web interface data",
       "Verify data structure"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 162,
@@ -2121,7 +2121,7 @@
       "Receive asset context",
       "Verify funding rate"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 163,
@@ -2133,7 +2133,7 @@
       "Receive user asset data",
       "Verify position info"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 164,
@@ -2145,7 +2145,7 @@
       "Send unsubscribe",
       "Verify no more updates"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 165,
@@ -2165,7 +2165,7 @@
       "Check no message mix-up",
       "Unsubscribe all and cleanup"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 166,
@@ -2177,7 +2177,7 @@
       "Receive messages",
       "Verify correct callback called"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 167,
@@ -2188,7 +2188,7 @@
       "Receive pong response",
       "Verify connection alive"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 168,
@@ -2208,7 +2208,7 @@
       "Verify message sequence continues",
       "Test multiple reconnections"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 169,
@@ -2221,7 +2221,7 @@
       "Verify delay increases",
       "Check max backoff respected"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 170,
@@ -2233,7 +2233,7 @@
       "Verify no copy made",
       "Measure latency"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 171,
@@ -2245,7 +2245,7 @@
       "Check _core submodule",
       "List available classes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 172,
@@ -2256,7 +2256,7 @@
       "Verify Rust core initialized",
       "Check async runtime started"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 173,
@@ -2276,7 +2276,7 @@
       "Use asyncio.run() to execute",
       "Verify no memory leaks"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 174,
@@ -2287,7 +2287,7 @@
       "Verify blocking call works",
       "Receive same result"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 175,
@@ -2307,7 +2307,7 @@
       "Check order_type enum mapped correctly",
       "Verify response returns to Python"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 176,
@@ -2319,7 +2319,7 @@
       "Access fields via attributes",
       "Verify types correct"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 177,
@@ -2331,7 +2331,7 @@
       "Verify error type",
       "Check error message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 178,
@@ -2343,7 +2343,7 @@
       "Trigger ValidationError",
       "Verify inheritance"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 179,
@@ -2355,7 +2355,7 @@
       "Receive message",
       "Verify callback called"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 180,
@@ -2367,7 +2367,7 @@
       "Verify messages received",
       "Check cleanup on break"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 181,
@@ -2386,7 +2386,7 @@
       "Check no key in log output",
       "Verify key zeroized on client drop"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 182,
@@ -2398,7 +2398,7 @@
       "Delete Python reference",
       "Verify Rust memory freed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 183,
@@ -2410,7 +2410,7 @@
       "Verify no deadlock",
       "Check performance"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 184,
@@ -2422,7 +2422,7 @@
       "Verify mypy compatibility",
       "Test IDE autocomplete"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 185,
@@ -2434,7 +2434,7 @@
       "Return Rust enum",
       "Verify Python enum"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 186,
@@ -2458,7 +2458,7 @@
       "Validate field types",
       "Test computed fields"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 188,
@@ -2470,7 +2470,7 @@
       "Exit context",
       "Verify cleanup"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 189,
@@ -2481,7 +2481,7 @@
       "Call blocking methods",
       "Verify thread safety"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 190,
@@ -2493,7 +2493,7 @@
       "Check all public functions",
       "Test generic types"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 191,
@@ -2504,7 +2504,7 @@
       "Use old SDK API",
       "Verify same behavior"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 192,
@@ -2516,7 +2516,7 @@
       "Verify order cancelled",
       "Check output format"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 193,
@@ -2528,7 +2528,7 @@
       "Verify callback works",
       "Clean shutdown"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 194,
@@ -2540,7 +2540,7 @@
       "Test cancel command",
       "Test positions query"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 195,
@@ -2552,7 +2552,7 @@
       "Verify JSON log format",
       "Check trace IDs"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 196,
@@ -2572,7 +2572,7 @@
       "Verify no outliers > 100ms",
       "Clean up test orders"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 197,
@@ -2584,7 +2584,7 @@
       "Calculate P99",
       "Verify <1ms"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 198,
@@ -2596,7 +2596,7 @@
       "Measure Python json time",
       "Verify 10x improvement"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 199,
@@ -2616,7 +2616,7 @@
       "Run garbage collection",
       "Verify memory returns to near baseline"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 200,
@@ -2628,7 +2628,7 @@
       "Verify pool stats",
       "Check no connection leaks"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 201,
@@ -2640,7 +2640,7 @@
       "Check no regressions",
       "Compare to baseline"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 202,
@@ -2652,7 +2652,7 @@
       "Check key not in swap",
       "Test on key drop"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 203,
@@ -2664,7 +2664,7 @@
       "Reject TLS 1.2",
       "Check cipher suite"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 204,
@@ -2676,7 +2676,7 @@
       "Send invalid address",
       "Verify rejection"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 205,
@@ -2688,7 +2688,7 @@
       "Verify local throttle",
       "Check no API ban"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 206,
@@ -2708,7 +2708,7 @@
       "Verify tamper detected",
       "Restore and verify check passes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 207,
@@ -2720,7 +2720,7 @@
       "Verify rejected",
       "Query methods work"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 208,
@@ -2732,7 +2732,7 @@
       "Verify validation runs",
       "Verify no API call made"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 209,
@@ -2744,7 +2744,7 @@
       "Verify testnet URL used",
       "Check chain ID"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 210,
@@ -2756,6 +2756,6 @@
       "Check advisories",
       "Update if needed"
     ],
-    "passes": false
+    "passes": true
   }
 ]

@@ -301,6 +301,21 @@ impl PyInfoClient {
         })
     }
 
+    /// Get frontend open orders for user
+    fn frontend_open_orders(&self, address: String, dex: Option<String>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let dex_str = dex.unwrap_or_default();
+            let result = self.inner.frontend_open_orders(&address, &dex_str).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get frontend open orders: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize frontend open orders: {}", e)))
+        })
+    }
+
     /// Get L2 orderbook snapshot
     fn l2_book(&self, coin: String) -> PyResult<String> {
         let rt = tokio::runtime::Runtime::new()
@@ -359,6 +374,156 @@ impl PyInfoClient {
 
             serde_json::to_string(&result)
                 .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize funding history: {}", e)))
+        })
+    }
+
+    /// Get user's staking summary
+    #[pyo3(signature = (address, dex=None))]
+    fn user_staking_summary(&self, address: String, dex: Option<String>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let dex_str = dex.unwrap_or_default();
+            let result = self.inner.user_staking_summary(&address, &dex_str).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user staking summary: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize staking summary: {}", e)))
+        })
+    }
+
+    /// Get user's staking delegations
+    #[pyo3(signature = (address, dex=None))]
+    fn user_staking_delegations(&self, address: String, dex: Option<String>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let dex_str = dex.unwrap_or_default();
+            let result = self.inner.user_staking_delegations(&address, &dex_str).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user staking delegations: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize staking delegations: {}", e)))
+        })
+    }
+
+    /// Get user's staking rewards
+    #[pyo3(signature = (address, dex=None))]
+    fn user_staking_rewards(&self, address: String, dex: Option<String>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let dex_str = dex.unwrap_or_default();
+            let result = self.inner.user_staking_rewards(&address, &dex_str).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user staking rewards: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize staking rewards: {}", e)))
+        })
+    }
+
+    /// Get comprehensive delegator history
+    #[pyo3(signature = (address, dex=None))]
+    fn delegator_history(&self, address: String, dex: Option<String>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let dex_str = dex.unwrap_or_default();
+            let result = self.inner.delegator_history(&address, &dex_str).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get delegator history: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize delegator history: {}", e)))
+        })
+    }
+
+    /// Get user non-funding ledger updates for a time range
+    fn user_non_funding_ledger_updates(&self, user: String, start_time: i64, end_time: Option<i64>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let result = self.inner.user_non_funding_ledger_updates(&user, start_time, end_time).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user non-funding ledger updates: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize ledger updates: {}", e)))
+        })
+    }
+
+    /// Get user non-funding ledger updates for mainnet with optional end time
+    fn user_non_funding_ledger_updates_mainnet(&self, user: String, start_time: i64, end_time: Option<i64>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let result = self.inner.user_non_funding_ledger_updates_mainnet(&user, start_time, end_time).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user non-funding ledger updates: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize ledger updates: {}", e)))
+        })
+    }
+
+    /// Get user's portfolio performance data
+    fn portfolio(&self, user: String) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let result = self.inner.portfolio(&user).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get portfolio: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize portfolio: {}", e)))
+        })
+    }
+
+    /// Get user's portfolio performance data for mainnet (default)
+    fn portfolio_mainnet(&self, user: String) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let result = self.inner.portfolio_mainnet(&user).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get portfolio: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize portfolio: {}", e)))
+        })
+    }
+
+    /// Get user's vault equity positions
+    #[pyo3(signature = (user, dex=None))]
+    fn user_vault_equities(&self, user: String, dex: Option<String>) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let dex_str = dex.unwrap_or_default();
+            let result = self.inner.user_vault_equities(&user, &dex_str).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user vault equities: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize vault equities: {}", e)))
+        })
+    }
+
+    /// Get user's vault equity positions for mainnet (default)
+    fn user_vault_equities_mainnet(&self, user: String) -> PyResult<String> {
+        let rt = tokio::runtime::Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create runtime: {}", e)))?;
+
+        rt.block_on(async {
+            let result = self.inner.user_vault_equities_mainnet(&user).await
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to get user vault equities: {}", e)))?;
+
+            serde_json::to_string(&result)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize vault equities: {}", e)))
         })
     }
 }

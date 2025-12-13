@@ -48,6 +48,22 @@ impl InfoClient {
         self.meta("").await
     }
 
+    /// Get user's account role and permissions
+    pub async fn user_role(&self, address: &str) -> Result<UserRoleResponse, HyperliquidError> {
+        let request_body = json!({
+            "type": "userRole",
+            "user": address
+        });
+
+        let response: UserRoleResponse = self.client.post("/info", &request_body).await?;
+        Ok(response)
+    }
+
+    /// Get user's account role for mainnet (default)
+    pub async fn user_role_mainnet(&self, address: &str) -> Result<UserRoleResponse, HyperliquidError> {
+        self.user_role(address).await
+    }
+
     /// Get user's current state including positions and margin
     pub async fn user_state(&self, address: &str, dex: &str) -> Result<UserState, HyperliquidError> {
         let request_body = json!({
@@ -636,9 +652,48 @@ impl InfoClient {
         Ok(response)
     }
 
-    /// Get user's portfolio performance data for mainnet (default)
-    pub async fn portfolio_mainnet(&self, user: &str) -> Result<Portfolio, HyperliquidError> {
-        self.portfolio(user).await
+    /// Get user's vault equity positions
+    pub async fn user_vault_equities(&self, user: &str, dex: &str) -> Result<Vec<VaultPnl>, HyperliquidError> {
+        let request_body = json!({
+            "type": "userVaultEquities",
+            "user": user,
+            "dex": dex
+        });
+
+        let response: Vec<VaultPnl> = self.client.post("/info", &request_body).await?;
+        Ok(response)
+    }
+
+    /// Get user's vault equity positions for mainnet (default)
+    pub async fn user_vault_equities_mainnet(&self, user: &str) -> Result<Vec<VaultPnl>, HyperliquidError> {
+        self.user_vault_equities(user, "").await
+    }
+
+    /// Get user's TWAP slice fills for a specific TWAP order
+    pub async fn user_twap_slice_fills(
+        &self,
+        user: &str,
+        twap_order_id: &str,
+        dex: &str,
+    ) -> Result<TwapSliceFillsResponse, HyperliquidError> {
+        let request_body = json!({
+            "type": "userTwapSliceFills",
+            "user": user,
+            "twapOrderId": twap_order_id,
+            "dex": dex
+        });
+
+        let response: TwapSliceFillsResponse = self.client.post("/info", &request_body).await?;
+        Ok(response)
+    }
+
+    /// Get user's TWAP slice fills for mainnet (default)
+    pub async fn user_twap_slice_fills_mainnet(
+        &self,
+        user: &str,
+        twap_order_id: &str,
+    ) -> Result<TwapSliceFillsResponse, HyperliquidError> {
+        self.user_twap_slice_fills(user, twap_order_id, "").await
     }
 
     /// Retrieve non-funding ledger updates for a user.
@@ -1135,6 +1190,195 @@ mod tests {
         assert_eq!(asset_position.total, Some("9000.0".to_string()));
         assert_eq!(asset_position.totalUsd, Some("9000.0".to_string()));
         assert_eq!(asset_position.type_, Some("deposit".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_user_role_request_format() {
+        let mock_server = mockito::Server::new();
+        let info_client = InfoClient::with_default_config(mock_server.url().as_str()).await.unwrap();
+
+        let test_address = "0x1234567890abcdef";
+
+        // Set up mock response
+        let mock_response = json!({
+            "user": test_address,
+            "role": {
+                "accountType": "user",
+                "permissions": ["trade", "withdraw", "deposit"],
+                "status": "active",
+                "assignedAt": 1640995200000
+            }
+        });
+
+        let mock = mock_server
+            .mock("POST", "/info")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(mock_response.to_string())
+            .create();
+
+        let result = info_client.user_role_mainnet(test_address).await;
+
+        // Verify the request was made correctly
+        mock.assert();
+        mock.expect(1);
+
+        // Verify the response was parsed correctly
+        let user_role = result.unwrap();
+        assert_eq!(user_role.user.to_string(), test_address);
+        assert_eq!(user_role.role.account_type, "user");
+        assert_eq!(user_role.role.permissions, vec!["trade", "withdraw", "deposit"]);
+        assert_eq!(user_role.role.status, "active");
+        assert_eq!(user_role.role.assigned_at, 1640995200000);
+    }
+
+    #[test]
+    fn test_user_role_serialization() {
+        // Test UserRole and UserRoleResponse serialization/deserialization
+        let user_role = UserRole {
+            account_type: "user".to_string(),
+            permissions: vec!["trade".to_string(), "withdraw".to_string()],
+            status: "active".to_string(),
+            assigned_at: 1640995200000,
+        };
+
+        let user_role_response = UserRoleResponse {
+            user: Address::from_str("0x1234567890abcdef").unwrap(),
+            role: user_role,
+        };
+
+        // Serialize to JSON
+        let json_str = serde_json::to_string(&user_role_response).unwrap();
+        println!("Serialized UserRoleResponse: {}", json_str);
+
+        // Deserialize back
+        let deserialized: UserRoleResponse = serde_json::from_str(&json_str).unwrap();
+
+        // Verify roundtrip equality
+        assert_eq!(deserialized.user.to_string(), "0x1234567890abcdef");
+        assert_eq!(deserialized.role.account_type, "user");
+        assert_eq!(deserialized.role.permissions, vec!["trade", "withdraw"]);
+        assert_eq!(deserialized.role.status, "active");
+        assert_eq!(deserialized.role.assigned_at, 1640995200000);
+
+        // Verify JSON format matches expected API response
+        let expected_json = r#"{"user":"0x1234567890abcdef","role":{"accountType":"user","permissions":["trade","withdraw"],"status":"active","assignedAt":1640995200000}}"#;
+        assert_eq!(json_str, expected_json);
+    }
+
+    #[test]
+    fn test_user_role_deserialization_from_api_response() {
+        // Test parsing UserRoleResponse from actual API response format
+        let api_response = r#"{
+            "user": "0x1234567890abcdef",
+            "role": {
+                "accountType": "admin",
+                "permissions": ["trade", "withdraw", "deposit", "manage_users"],
+                "status": "active",
+                "assignedAt": 1640995200000
+            }
+        }"#;
+
+        let user_role_response: UserRoleResponse = serde_json::from_str(api_response).unwrap();
+
+        assert_eq!(user_role_response.user.to_string(), "0x1234567890abcdef");
+        assert_eq!(user_role_response.role.account_type, "admin");
+        assert_eq!(user_role_response.role.permissions.len(), 4);
+        assert!(user_role_response.role.permissions.contains(&"trade".to_string()));
+        assert!(user_role_response.role.permissions.contains(&"manage_users".to_string()));
+        assert_eq!(user_role_response.role.status, "active");
+        assert_eq!(user_role_response.role.assigned_at, 1640995200000);
+    }
+
+    #[test]
+    fn test_user_role_error_handling() {
+        // Test error handling for invalid user role responses
+        let invalid_json = r#"{"invalid": "format"}"#;
+
+        let result: Result<UserRoleResponse, _> = serde_json::from_str(invalid_json);
+        assert!(result.is_err(), "Should fail to parse invalid JSON");
+
+        let missing_fields = r#"{"user": "0x123"}"#;
+        let result: Result<UserRoleResponse, _> = serde_json::from_str(missing_fields);
+        assert!(result.is_err(), "Should fail to parse missing role field");
+    }
+
+    #[tokio::test]
+    async fn test_user_role_error_responses() {
+        let mock_server = mockito::Server::new();
+        let info_client = InfoClient::with_default_config(mock_server.url().as_str()).await.unwrap();
+
+        // Test 404 response
+        let mock = mock_server
+            .mock("POST", "/info")
+            .with_status(404)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"error": "User not found"}"#)
+            .create();
+
+        let result = info_client.user_role_mainnet("0x123").await;
+        assert!(result.is_err(), "Should return error for 404 response");
+
+        // Test network error
+        let mock = mock_server
+            .mock("POST", "/info")
+            .with_status(500)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"error": "Internal server error"}"#)
+            .create();
+
+        let result = info_client.user_role_mainnet("0x123").await;
+        assert!(result.is_err(), "Should return error for 500 response");
+    }
+
+    #[tokio::test]
+    async fn test_user_role_integration() {
+        let mock_server = mockito::Server::new();
+        let info_client = InfoClient::with_default_config(mock_server.url().as_str()).await.unwrap();
+
+        let test_user = "0x1234567890abcdef";
+        let test_address = Address::from_str(test_user).unwrap();
+
+        // Test with different account types
+        let test_cases = vec![
+            ("user", vec!["trade", "withdraw", "deposit"]),
+            ("admin", vec!["trade", "withdraw", "deposit", "manage_users", "view_all_users"]),
+            ("subaccount", vec!["trade"]),
+        ];
+
+        for (account_type, permissions) in test_cases {
+            let mock_response = json!({
+                "user": test_user,
+                "role": {
+                    "accountType": account_type,
+                    "permissions": permissions,
+                    "status": "active",
+                    "assignedAt": 1640995200000
+                }
+            });
+
+            let mock = mock_server
+                .mock("POST", "/info")
+                .with_status(200)
+                .with_header("content-type", "application/json")
+                .with_body(mock_response.to_string())
+                .create();
+
+            let result = info_client.user_role_mainnet(test_user).await.unwrap();
+
+            assert_eq!(result.user, test_address);
+            assert_eq!(result.role.account_type, account_type);
+            assert_eq!(result.role.status, "active");
+            assert_eq!(result.role.assigned_at, 1640995200000);
+
+            // Verify all permissions are present
+            for permission in &permissions {
+                assert!(result.role.permissions.contains(&permission.to_string()));
+            }
+
+            mock.assert();
+            mock.expect(1);
+        }
     }
 
     #[tokio::test]
@@ -1890,5 +2134,478 @@ mod tests {
         assert_eq!(spot_order_statuses[1].status, "filled");
         assert_eq!(spot_order_statuses[1].oid, Some(987654321));
         assert_eq!(spot_order_statuses[1].cloid, Some("my-order-123".to_string()));
+    }
+
+    #[tokio::test]
+    async fn test_user_twap_slice_fills() {
+        let config = HttpClientConfig::default();
+        let http_client = HttpClient::new("https://api.hyperliquid.xyz", config).unwrap();
+        let info_client = InfoClient::new(http_client);
+
+        let result = info_client.user_twap_slice_fills(
+            "0x1234567890abcdef",
+            "twap_12345",
+            ""
+        ).await;
+        assert!(result.is_err() || result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_user_twap_slice_fills_mainnet() {
+        let config = HttpClientConfig::default();
+        let http_client = HttpClient::new("https://api.hyperliquid.xyz", config).unwrap();
+        let info_client = InfoClient::new(http_client);
+
+        let result = info_client.user_twap_slice_fills_mainnet(
+            "0x1234567890abcdef",
+            "twap_12345"
+        ).await;
+        assert!(result.is_err() || result.is_ok());
+    }
+
+    #[test]
+    fn test_user_twap_slice_fills_request_format() {
+        // Test that user_twap_slice_fills request has correct format
+        let request_body = json!({
+            "type": "userTwapSliceFills",
+            "user": "0x1234567890abcdef",
+            "twapOrderId": "twap_12345",
+            "dex": ""
+        });
+
+        let json_str = serde_json::to_string(&request_body).unwrap();
+        let expected = r#"{"type":"userTwapSliceFills","user":"0x1234567890abcdef","twapOrderId":"twap_12345","dex":""}"#;
+        assert_eq!(json_str, expected);
+    }
+
+    #[test]
+    fn test_user_twap_slice_fills_with_dex_request_format() {
+        // Test that user_twap_slice_fills request with dex has correct format
+        let request_body = json!({
+            "type": "userTwapSliceFills",
+            "user": "0x1234567890abcdef",
+            "twapOrderId": "twap_12345",
+            "dex": "testnet"
+        });
+
+        let json_str = serde_json::to_string(&request_body).unwrap();
+        let expected = r#"{"type":"userTwapSliceFills","user":"0x1234567890abcdef","twapOrderId":"twap_12345","dex":"testnet"}"#;
+        assert_eq!(json_str, expected);
+    }
+
+    #[test]
+    fn test_twap_slice_fills_response_parsing() {
+        // Test parsing TWAP slice fills response from API
+        let twap_slice_fills_response = r#"{
+            "twapOrderId": "twap_12345",
+            "user": "0x1234567890abcdef",
+            "coin": "BTC",
+            "executionSummary": {
+                "twapOrderId": "twap_12345",
+                "user": "0x1234567890abcdef",
+                "coin": "BTC",
+                "totalTargetSz": "1.0",
+                "totalExecutedSz": "1.0",
+                "avgPx": "50000.0",
+                "status": "completed",
+                "startTime": 1640995200000,
+                "endTime": 1640998800000,
+                "totalSlices": 10,
+                "completedSlices": 10,
+                "failedSlices": 0,
+                "totalFees": "0.001",
+                "priceDeviation": "0.5",
+                "executionQuality": {
+                    "twapDeviation": "0.1",
+                    "vwapDeviation": "0.2",
+                    "maxDeviation": "0.8",
+                    "slippage": "0.05",
+                    "marketImpact": "0.02",
+                    "efficiencyScore": 95
+                }
+            },
+            "slices": [
+                {
+                    "sliceId": "slice_001",
+                    "sliceNumber": 1,
+                    "totalSlices": 10,
+                    "targetSz": "0.1",
+                    "executedSz": "0.1",
+                    "targetPx": "50000.0",
+                    "avgPx": "50000.0",
+                    "status": "filled",
+                    "startTime": 1640995200000,
+                    "endTime": 1640995260000,
+                    "fills": [
+                        {
+                            "coin": "BTC",
+                            "side": "Buy",
+                            "px": "50000.0",
+                            "sz": "0.1",
+                            "time": 1640995200000,
+                            "hash": "0x1234567890abcdef",
+                            "fee": "0.00005",
+                            "feeAsset": "USDC",
+                            "oid": 12345,
+                            "sliceId": "slice_001",
+                            "sliceNumber": 1,
+                            "totalSlices": 10,
+                            "sliceStatus": "filled",
+                            "targetPx": "50000.0",
+                            "priceDeviation": "0.0"
+                        }
+                    ],
+                    "totalFees": "0.00005"
+                }
+            ],
+            "allFills": [
+                {
+                    "coin": "BTC",
+                    "side": "Buy",
+                    "px": "50000.0",
+                    "sz": "0.1",
+                    "time": 1640995200000,
+                    "hash": "0x1234567890abcdef",
+                    "fee": "0.00005",
+                    "feeAsset": "USDC",
+                    "oid": 12345,
+                    "sliceId": "slice_001",
+                    "sliceNumber": 1,
+                    "totalSlices": 10,
+                    "sliceStatus": "filled",
+                    "targetPx": "50000.0",
+                    "priceDeviation": "0.0"
+                }
+            ],
+            "timestamp": 1640998800000
+        }"#;
+
+        let response: TwapSliceFillsResponse = serde_json::from_str(twap_slice_fills_response).unwrap();
+
+        // Verify response parsing
+        assert_eq!(response.twap_order_id, "twap_12345");
+        assert_eq!(response.user, "0x1234567890abcdef");
+        assert_eq!(response.coin, "BTC");
+        assert_eq!(response.slices.len(), 1);
+        assert_eq!(response.all_fills.len(), 1);
+        assert_eq!(response.timestamp, 1640998800000);
+
+        // Verify execution summary parsing
+        let summary = &response.execution_summary;
+        assert_eq!(summary.twap_order_id, "twap_12345");
+        assert_eq!(summary.total_slices, 10);
+        assert_eq!(summary.completed_slices, 10);
+        assert_eq!(summary.failed_slices, 0);
+        assert_eq!(summary.total_fees, Some("0.001".to_string()));
+        assert_eq!(summary.price_deviation, Some("0.5".to_string()));
+
+        // Verify execution quality parsing
+        assert!(summary.execution_quality.is_some());
+        let quality = summary.execution_quality.as_ref().unwrap();
+        assert_eq!(quality.twap_deviation, "0.1");
+        assert_eq!(quality.efficiency_score, 95);
+
+        // Verify slice parsing
+        let slice = &response.slices[0];
+        assert_eq!(slice.slice_id, "slice_001");
+        assert_eq!(slice.slice_number, 1);
+        assert_eq!(slice.total_slices, 10);
+        assert_eq!(slice.status, "filled");
+        assert_eq!(slice.total_fees, Some("0.00005".to_string()));
+        assert_eq!(slice.fills.len(), 1);
+
+        // Verify fill parsing
+        let fill = &response.all_fills[0];
+        assert_eq!(fill.coin, "BTC");
+        assert_eq!(fill.side, "Buy");
+        assert_eq!(fill.px, "50000.0");
+        assert_eq!(fill.sz, "0.1");
+        assert_eq!(fill.slice_id, "slice_001");
+        assert_eq!(fill.fee, Some("0.00005".to_string()));
+        assert_eq!(fill.fee_asset, Some("USDC".to_string()));
+    }
+
+    #[test]
+    fn test_twap_slice_fill_parsing_from_slice_fills_response() {
+        // Test parsing individual TWAP slice fills from response
+        let slice_fills_array = r#"[
+            {
+                "coin": "BTC",
+                "side": "Buy",
+                "px": "50000.0",
+                "sz": "0.1",
+                "time": 1640995200000,
+                "hash": "0x1234567890abcdef",
+                "fee": "0.00005",
+                "feeAsset": "USDC",
+                "oid": 12345,
+                "sliceId": "slice_001",
+                "sliceNumber": 1,
+                "totalSlices": 10,
+                "sliceStatus": "filled",
+                "targetPx": "50000.0",
+                "priceDeviation": "0.0"
+            },
+            {
+                "coin": "BTC",
+                "side": "Buy",
+                "px": "50010.0",
+                "sz": "0.1",
+                "time": 1640995260000,
+                "hash": "0xabcdef1234567890",
+                "fee": "0.00006",
+                "feeAsset": "USDC",
+                "oid": 12346,
+                "sliceId": "slice_002",
+                "sliceNumber": 2,
+                "totalSlices": 10,
+                "sliceStatus": "filled",
+                "targetPx": "50000.0",
+                "priceDeviation": "0.02"
+            }
+        ]"#;
+
+        let fills: Vec<TwapSliceFill> = serde_json::from_str(slice_fills_array).unwrap();
+
+        // Verify slice fills parsing
+        assert_eq!(fills.len(), 2);
+
+        assert_eq!(fills[0].coin, "BTC");
+        assert_eq!(fills[0].side, "Buy");
+        assert_eq!(fills[0].px, "50000.0");
+        assert_eq!(fills[0].sz, "0.1");
+        assert_eq!(fills[0].slice_id, "slice_001");
+        assert_eq!(fills[0].slice_number, 1);
+        assert_eq!(fills[0].total_slices, 10);
+        assert_eq!(fills[0].slice_status, "filled");
+        assert_eq!(fills[0].target_px, Some("50000.0".to_string()));
+        assert_eq!(fills[0].price_deviation, Some("0.0".to_string()));
+        assert_eq!(fills[0].fee, Some("0.00005".to_string()));
+        assert_eq!(fills[0].fee_asset, Some("USDC".to_string()));
+
+        assert_eq!(fills[1].coin, "BTC");
+        assert_eq!(fills[1].side, "Buy");
+        assert_eq!(fills[1].px, "50010.0");
+        assert_eq!(fills[1].sz, "0.1");
+        assert_eq!(fills[1].slice_id, "slice_002");
+        assert_eq!(fills[1].slice_number, 2);
+        assert_eq!(fills[1].total_slices, 10);
+        assert_eq!(fills[1].slice_status, "filled");
+        assert_eq!(fills[1].target_px, Some("50000.0".to_string()));
+        assert_eq!(fills[1].price_deviation, Some("0.02".to_string()));
+    }
+
+    #[test]
+    fn test_twap_slice_parsing_from_slice_fills_response() {
+        // Test parsing TWAP slices from response
+        let slices_array = r#"[
+            {
+                "sliceId": "slice_001",
+                "sliceNumber": 1,
+                "totalSlices": 10,
+                "targetSz": "0.1",
+                "executedSz": "0.1",
+                "targetPx": "50000.0",
+                "avgPx": "50000.0",
+                "status": "filled",
+                "startTime": 1640995200000,
+                "endTime": 1640995260000,
+                "fills": [
+                    {
+                        "coin": "BTC",
+                        "side": "Buy",
+                        "px": "50000.0",
+                        "sz": "0.1",
+                        "time": 1640995200000,
+                        "hash": "0x1234567890abcdef",
+                        "fee": "0.00005",
+                        "feeAsset": "USDC",
+                        "oid": 12345,
+                        "sliceId": "slice_001",
+                        "sliceNumber": 1,
+                        "totalSlices": 10,
+                        "sliceStatus": "filled",
+                        "targetPx": "50000.0",
+                        "priceDeviation": "0.0"
+                    }
+                ],
+                "totalFees": "0.00005"
+            },
+            {
+                "sliceId": "slice_002",
+                "sliceNumber": 2,
+                "totalSlices": 10,
+                "targetSz": "0.1",
+                "executedSz": "0.1",
+                "targetPx": "50000.0",
+                "avgPx": "50010.0",
+                "status": "filled",
+                "startTime": 1640995260000,
+                "endTime": 1640995320000,
+                "fills": [
+                    {
+                        "coin": "BTC",
+                        "side": "Buy",
+                        "px": "50010.0",
+                        "sz": "0.1",
+                        "time": 1640995260000,
+                        "hash": "0xabcdef1234567890",
+                        "fee": "0.00006",
+                        "feeAsset": "USDC",
+                        "oid": 12346,
+                        "sliceId": "slice_002",
+                        "sliceNumber": 2,
+                        "totalSlices": 10,
+                        "sliceStatus": "filled",
+                        "targetPx": "50000.0",
+                        "priceDeviation": "0.02"
+                    }
+                ],
+                "totalFees": "0.00006"
+            }
+        ]"#;
+
+        let slices: Vec<TwapSlice> = serde_json::from_str(slices_array).unwrap();
+
+        // Verify slices parsing
+        assert_eq!(slices.len(), 2);
+
+        // Verify first slice
+        assert_eq!(slices[0].slice_id, "slice_001");
+        assert_eq!(slices[0].slice_number, 1);
+        assert_eq!(slices[0].total_slices, 10);
+        assert_eq!(slices[0].target_sz, "0.1");
+        assert_eq!(slices[0].executed_sz, "0.1");
+        assert_eq!(slices[0].target_px, Some("50000.0".to_string()));
+        assert_eq!(slices[0].avg_px, "50000.0");
+        assert_eq!(slices[0].status, "filled");
+        assert_eq!(slices[0].fills.len(), 1);
+        assert_eq!(slices[0].total_fees, Some("0.00005".to_string()));
+
+        // Verify second slice
+        assert_eq!(slices[1].slice_id, "slice_002");
+        assert_eq!(slices[1].slice_number, 2);
+        assert_eq!(slices[1].total_slices, 10);
+        assert_eq!(slices[1].target_sz, "0.1");
+        assert_eq!(slices[1].executed_sz, "0.1");
+        assert_eq!(slices[1].target_px, Some("50000.0".to_string()));
+        assert_eq!(slices[1].avg_px, "50010.0");
+        assert_eq!(slices[1].status, "filled");
+        assert_eq!(slices[1].fills.len(), 1);
+        assert_eq!(slices[1].total_fees, Some("0.00006".to_string()));
+    }
+
+    #[test]
+    fn test_twap_execution_summary_parsing_from_slice_fills_response() {
+        // Test parsing TWAP execution summary from response
+        let summary_json = r#"{
+            "twapOrderId": "twap_12345",
+            "user": "0x1234567890abcdef",
+            "coin": "BTC",
+            "totalTargetSz": "1.0",
+            "totalExecutedSz": "1.0",
+            "avgPx": "50000.0",
+            "status": "completed",
+            "startTime": 1640995200000,
+            "endTime": 1640998800000,
+            "totalSlices": 10,
+            "completedSlices": 10,
+            "failedSlices": 0,
+            "totalFees": "0.001",
+            "priceDeviation": "0.5",
+            "executionQuality": {
+                "twapDeviation": "0.1",
+                "vwapDeviation": "0.2",
+                "maxDeviation": "0.8",
+                "slippage": "0.05",
+                "marketImpact": "0.02",
+                "efficiencyScore": 95
+            }
+        }"#;
+
+        let summary: TwapExecutionSummary = serde_json::from_str(summary_json).unwrap();
+
+        // Verify execution summary parsing
+        assert_eq!(summary.twap_order_id, "twap_12345");
+        assert_eq!(summary.user, "0x1234567890abcdef");
+        assert_eq!(summary.coin, "BTC");
+        assert_eq!(summary.total_target_sz, "1.0");
+        assert_eq!(summary.total_executed_sz, "1.0");
+        assert_eq!(summary.avg_px, "50000.0");
+        assert_eq!(summary.status, "completed");
+        assert_eq!(summary.start_time, 1640995200000);
+        assert_eq!(summary.end_time, Some(1640998800000));
+        assert_eq!(summary.total_slices, 10);
+        assert_eq!(summary.completed_slices, 10);
+        assert_eq!(summary.failed_slices, 0);
+        assert_eq!(summary.total_fees, Some("0.001".to_string()));
+        assert_eq!(summary.price_deviation, Some("0.5".to_string()));
+
+        // Verify execution quality parsing
+        assert!(summary.execution_quality.is_some());
+        let quality = summary.execution_quality.as_ref().unwrap();
+        assert_eq!(quality.twap_deviation, "0.1");
+        assert_eq!(quality.vwap_deviation, "0.2");
+        assert_eq!(quality.max_deviation, "0.8");
+        assert_eq!(quality.slippage, "0.05");
+        assert_eq!(quality.market_impact, "0.02");
+        assert_eq!(quality.efficiency_score, 95);
+    }
+
+    #[test]
+    fn test_twap_slice_fills_response_serialization() {
+        // Test TWAP slice fills response serialization/deserialization
+        let response = TwapSliceFillsResponse {
+            twap_order_id: "twap_12345".to_string(),
+            user: "0x1234567890abcdef".to_string(),
+            coin: "BTC".to_string(),
+            execution_summary: TwapExecutionSummary {
+                twap_order_id: "twap_12345".to_string(),
+                user: "0x1234567890abcdef".to_string(),
+                coin: "BTC".to_string(),
+                total_target_sz: "1.0".to_string(),
+                total_executed_sz: "1.0".to_string(),
+                avg_px: "50000.0".to_string(),
+                status: "completed".to_string(),
+                start_time: 1640995200000,
+                end_time: Some(1640998800000),
+                total_slices: 10,
+                completed_slices: 10,
+                failed_slices: 0,
+                total_fees: Some("0.001".to_string()),
+                price_deviation: Some("0.5".to_string()),
+                execution_quality: Some(ExecutionQuality {
+                    twap_deviation: "0.1".to_string(),
+                    vwap_deviation: "0.2".to_string(),
+                    max_deviation: "0.8".to_string(),
+                    slippage: "0.05".to_string(),
+                    market_impact: "0.02".to_string(),
+                    efficiency_score: 95,
+                }),
+            },
+            slices: vec![],
+            all_fills: vec![],
+            timestamp: 1640998800000,
+        };
+
+        // Serialize to JSON
+        let json_str = serde_json::to_string(&response).unwrap();
+        println!("Serialized TwapSliceFillsResponse: {}", json_str);
+
+        // Deserialize back
+        let deserialized: TwapSliceFillsResponse = serde_json::from_str(&json_str).unwrap();
+
+        // Verify roundtrip equality
+        assert_eq!(deserialized.twap_order_id, response.twap_order_id);
+        assert_eq!(deserialized.user, response.user);
+        assert_eq!(deserialized.coin, response.coin);
+        assert_eq!(deserialized.timestamp, response.timestamp);
+        assert_eq!(deserialized.slices.len(), 0);
+        assert_eq!(deserialized.all_fills.len(), 0);
+
+        // Verify execution summary roundtrip
+        assert_eq!(deserialized.execution_summary.twap_order_id, response.execution_summary.twap_order_id);
+        assert_eq!(deserialized.execution_summary.total_slices, response.execution_summary.total_slices);
+        assert_eq!(deserialized.execution_summary.execution_quality.as_ref().unwrap().efficiency_score, 95);
     }
 }

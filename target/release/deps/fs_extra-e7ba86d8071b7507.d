@@ -1,0 +1,10 @@
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/fs_extra-e7ba86d8071b7507.d: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/error.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/file.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/dir.rs
+
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/libfs_extra-e7ba86d8071b7507.rlib: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/error.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/file.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/dir.rs
+
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/libfs_extra-e7ba86d8071b7507.rmeta: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/error.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/file.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/dir.rs
+
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/lib.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/error.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/file.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fs_extra-1.3.0/src/dir.rs:

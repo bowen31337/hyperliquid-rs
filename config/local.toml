@@ -1,0 +1,130 @@
+# Local development configuration for Hyperliquid SDK
+
+[environment]
+# Environment: "mainnet", "testnet", or "local"
+env = "local"
+
+# Optional: Override base URL (defaults to env-specific URL if not set)
+base_url = "http://localhost:3001"
+
+# Optional: Override WebSocket URL (defaults to env-specific URL if not set)
+websocket_url = "ws://localhost:3001/ws"
+
+[http]
+# Request timeout in milliseconds
+request_timeout_ms = 10000
+
+# Maximum connections per host
+max_connections_per_host = 5
+
+# Maximum total connections
+max_total_connections = 50
+
+# Connection timeout in milliseconds
+connect_timeout_ms = 5000
+
+# Enable certificate pinning (security feature)
+enable_cert_pinning = false
+
+# Enable rate limiting
+enable_rate_limiting = false
+
+[websocket]
+# Connection timeout in milliseconds
+connect_timeout_ms = 5000
+
+# Reconnection delay in milliseconds
+reconnect_delay_ms = 500
+
+# Maximum reconnection attempts
+max_reconnect_attempts = 3
+
+# Message buffer size
+buffer_size = 500
+
+# Enable compression
+enable_compression = false
+
+# Ping interval in milliseconds
+ping_interval_ms = 10000
+
+[runtime]
+# Number of worker threads (0 = use CPU cores)
+worker_threads = 2
+
+# Maximum number of blocking threads
+max_blocking_threads = 100
+
+# Thread stack size in bytes (2MB default)
+thread_stack_size = 1048576
+
+# Enable I/O driver
+enable_io = true
+
+# Enable time driver
+enable_time = true
+
+# Global queue interval for work-stealing
+global_queue_interval = 61
+
+# Shutdown timeout in seconds
+shutdown_timeout_secs = 10
+
+[logging]
+# Log level: trace, debug, info, warn, error
+level = "debug"
+
+# Log format: json, pretty, compact
+format = "pretty"
+
+# Optional: File path for log output
+file_path = "logs/hyperliquid-sdk.log"
+
+# Maximum log file size in MB
+max_log_size_mb = 50
+
+# Maximum number of log files to keep
+max_log_files = 3
+
+# Enable colored output
+colored_output = true
+
+[security]
+# Enable certificate pinning
+enable_cert_pinning = false
+
+# Certificate pinning configuration
+[security.cert_pinning]
+# Domain to pin certificate for
+# domain = "localhost"
+
+# SHA256 hashes of pinned certificates
+# pins = []
+
+# Enable backup pins
+enable_backup_pins = false
+
+# API key rotation interval in hours
+key_rotation_hours = 24
+
+# Enable request signing
+enable_request_signing = false
+
+# Strict mode (fail on security warnings)
+strict_mode = false
+
+[metrics]
+# Enable metrics collection
+enabled = false
+
+# Metrics endpoint path
+endpoint = "/metrics"
+
+# Metrics collection interval in seconds
+collection_interval_secs = 10
+
+# Enable Prometheus export
+enable_prometheus = false
+
+# Custom metrics namespace
+namespace = "hyperliquid_local"

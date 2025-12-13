@@ -1,0 +1,30 @@
+[package]
+name = "hyperliquid-python"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "Python bindings for Hyperliquid Rust SDK"
+license = "MIT"
+authors = ["Hyperliquid Team"]
+repository = "https://github.com/hyperliquid-dex/hyperliquid-rs"
+
+[dependencies]
+# PyO3 for Python bindings
+pyo3 = { workspace = true, features = ["extension-module"] }
+
+# Core library
+hyperliquid-core = { path = "../hyperliquid-core" }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[lib]
+name = "hyperliquid_rs"
+crate-type = ["cdylib"]
+
+[features]
+default = ["pyo3/extension-module"]

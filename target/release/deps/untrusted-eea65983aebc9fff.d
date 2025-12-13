@@ -1,0 +1,10 @@
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/untrusted-eea65983aebc9fff.d: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/input.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/no_panic.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/reader.rs
+
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/libuntrusted-eea65983aebc9fff.rlib: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/input.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/no_panic.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/reader.rs
+
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/libuntrusted-eea65983aebc9fff.rmeta: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/input.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/no_panic.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/reader.rs
+
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/lib.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/input.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/no_panic.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/untrusted-0.9.0/src/reader.rs:

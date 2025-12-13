@@ -1,0 +1,1601 @@
+<project_specification>
+  <project_name>Hyperliquid SDK - Rust Core Rebuild</project_name>
+
+  <source_codebase>
+    <path>/media/bowen/DATA/projects/ecommerce/hyperliquid-python-sdk</path>
+    <version>0.21.0</version>
+    <repository>https://github.com/hyperliquid-dex/hyperliquid-python-sdk</repository>
+  </source_codebase>
+
+  <overview>
+    A complete ground-up rebuild of the Hyperliquid Python SDK (v0.21.0) with a Rust core for maximum 
+    performance, memory safety, and low-latency trading operations. The SDK will provide Python bindings 
+    for ease of use while leveraging Rust's zero-cost abstractions for critical paths (WebSocket handling, 
+    order execution, data serialization). Includes auto-generated OpenAPI documentation, gRPC-based internal 
+    communication, and comprehensive security hardening for production trading environments.
+    
+    This rebuild is based on the existing SDK at:
+    /media/bowen/DATA/projects/ecommerce/hyperliquid-python-sdk
+  </overview>
+
+  <existing_codebase_analysis>
+    <current_architecture>
+      The existing SDK follows a simple layered architecture:
+      
+      hyperliquid-python-sdk/
+      ├── hyperliquid/
+      │   ├── __init__.py              # Empty module init
+      │   ├── api.py                   # Base HTTP client (44 lines)
+      │   ├── info.py                  # Market data queries (786 lines)
+      │   ├── exchange.py              # Trading operations (1163 lines)
+      │   ├── websocket_manager.py     # WebSocket handling (163 lines)
+      │   └── utils/
+      │       ├── __init__.py
+      │       ├── constants.py         # API URLs (3 constants)
+      │       ├── error.py             # Custom exceptions
+      │       ├── signing.py           # EIP-712 signing (510 lines)
+      │       └── types.py             # TypedDict definitions (219 lines)
+      ├── examples/                    # 45+ example scripts
+      ├── tests/                       # VCR-based integration tests
+      └── api/                         # OpenAPI component definitions (YAML)
+    </current_architecture>
+
+    <current_dependencies>
+      FROM pyproject.toml:
+      - python = "^3.9"
+      - eth-utils = ">=2.1.0,<6.0.0"      # Ethereum utilities
+      - eth-account = ">=0.10.0,<0.14.0"  # Wallet signing
+      - websocket-client = "^1.5.1"       # Blocking WebSocket
+      - requests = "^2.31.0"              # Sync HTTP client
+      - msgpack = "^1.0.5"                # Action hashing
+      
+      ISSUES:
+      - Uses blocking `requests` (no async support)
+      - Uses blocking `websocket-client` (runs in separate thread)
+      - No connection pooling
+      - Python GIL limits parallelism
+    </current_dependencies>
+
+    <current_modules_to_rewrite>
+      <module name="api.py" lines="44" path="hyperliquid/api.py">
+        Base HTTP client using requests.Session
+        - post() method for all API calls
+        - _handle_exception() for error handling
+        
+        RUST REPLACEMENT:
+        - reqwest with connection pooling
+        - async/await with tokio
+        - Proper timeout and retry logic
+      </module>
+
+      <module name="info.py" lines="786" path="hyperliquid/info.py">
+        Market data and account queries (Info class):
+        - user_state(), spot_user_state()
+        - open_orders(), frontend_open_orders()
+        - all_mids(), meta(), spot_meta()
+        - user_fills(), user_fills_by_time()
+        - funding_history(), user_funding_history()
+        - l2_snapshot(), candles_snapshot()
+        - user_fees(), user_staking_*()
+        - query_order_by_oid/cloid()
+        - historical_orders(), portfolio()
+        - WebSocket subscription handling
+        
+        RUST REPLACEMENT:
+        - Strongly typed responses (serde)
+        - In-memory caching for metadata
+        - Zero-copy deserialization
+      </module>
+
+      <module name="exchange.py" lines="1163" path="hyperliquid/exchange.py">
+        Trading operations (Exchange class):
+        - order(), bulk_orders()
+        - modify_order(), bulk_modify_orders_new()
+        - market_open(), market_close()
+        - cancel(), cancel_by_cloid(), bulk_cancel*()
+        - schedule_cancel()
+        - update_leverage(), update_isolated_margin()
+        - usd_transfer(), spot_transfer(), send_asset()
+        - usd_class_transfer()
+        - vault_usd_transfer(), sub_account_transfer()
+        - token_delegate() (staking)
+        - withdraw_from_bridge()
+        - approve_agent(), approve_builder_fee()
+        - convert_to_multi_sig_user()
+        - spot_deploy_*() (token deployment)
+        - perp_deploy_*() (perpetual deployment)
+        - c_signer_*(), c_validator_*() (validator ops)
+        - multi_sig() (multi-signature transactions)
+        - use_big_blocks() (EVM)
+        - agent_enable_dex_abstraction()
+        
+        RUST REPLACEMENT:
+        - Secure signing in Rust (keys never exposed to Python)
+        - Atomic batch operations
+        - Pre-trade risk validation
+      </module>
+
+      <module name="websocket_manager.py" lines="163" path="hyperliquid/websocket_manager.py">
+        WebSocket subscription management:
+        - Threading-based (runs in separate thread)
+        - subscription_to_identifier() mapping
+        - ws_msg_to_identifier() for routing
+        - subscribe()/unsubscribe() with callbacks
+        - Ping/pong keepalive (every 50s)
+        
+        SUBSCRIPTION TYPES:
+        - allMids, l2Book, trades, bbo
+        - userEvents, userFills, orderUpdates
+        - candle, userFundings
+        - userNonFundingLedgerUpdates
+        - webData2, activeAssetCtx, activeAssetData
+        
+        RUST REPLACEMENT:
+        - tokio-tungstenite for async WebSocket
+        - Auto-reconnection with exponential backoff
+        - Circular buffer for burst handling
+        - Zero-copy message passing to Python
+      </module>
+
+      <module name="signing.py" lines="510" path="hyperliquid/utils/signing.py">
+        EIP-712 signature generation:
+        - action_hash() using msgpack + keccak
+        - construct_phantom_agent() for L1 signing
+        - sign_l1_action() - main L1 action signing
+        - sign_user_signed_action() - user-signed actions
+        - Various sign_*() helpers for specific operations
+        - Multi-sig signing support
+        - Address recovery from signatures
+        - float_to_wire() precision handling
+        
+        SIGNING TYPES:
+        - USD_SEND_SIGN_TYPES
+        - SPOT_TRANSFER_SIGN_TYPES
+        - WITHDRAW_SIGN_TYPES
+        - USD_CLASS_TRANSFER_SIGN_TYPES
+        - SEND_ASSET_SIGN_TYPES
+        - TOKEN_DELEGATE_TYPES
+        - MULTI_SIG_ENVELOPE_SIGN_TYPES
+        - USER_DEX_ABSTRACTION_SIGN_TYPES
+        - CONVERT_TO_MULTI_SIG_USER_SIGN_TYPES
+        
+        RUST REPLACEMENT:
+        - ring/ed25519-dalek for cryptography
+        - mlock() for secure memory
+        - Hardware wallet support via USB HID
+      </module>
+
+      <module name="types.py" lines="219" path="hyperliquid/utils/types.py">
+        TypedDict definitions for type safety:
+        - Meta, SpotMeta, SpotMetaAndAssetCtxs
+        - Subscription types (13+ variants)
+        - Message types (WsMsg union)
+        - Order types (OrderType, OrderWire)
+        - BuilderInfo, PerpDexSchemaInput
+        - Cloid class (16-byte hex identifier)
+        
+        RUST REPLACEMENT:
+        - Native Rust structs with serde
+        - PyO3 derives for Python conversion
+        - Compile-time type checking
+      </module>
+    </current_modules_to_rewrite>
+
+    <existing_examples>
+      The SDK includes 45+ examples at:
+      /media/bowen/DATA/projects/ecommerce/hyperliquid-python-sdk/examples/
+      
+      KEY EXAMPLES TO PRESERVE FUNCTIONALITY:
+      - basic_order.py - Simple limit order
+      - basic_market_order.py - Market order with slippage
+      - basic_order_modify.py - Order modification
+      - cancel_open_orders.py - Bulk cancellation
+      - basic_ws.py - WebSocket subscriptions
+      - basic_leverage_adjustment.py - Leverage management
+      - basic_transfer.py - USD transfers
+      - basic_spot_order.py - Spot trading
+      - basic_vault.py - Vault operations
+      - basic_staking.py - Token delegation
+      - basic_agent.py - Agent key management
+      - basic_tpsl.py - Take-profit/stop-loss
+      - multi_sig_*.py - Multi-signature flows
+      - spot_deploy.py - Token deployment
+      - perp_deploy.py - Perpetual deployment
+    </existing_examples>
+
+    <existing_tests>
+      Test infrastructure at:
+      /media/bowen/DATA/projects/ecommerce/hyperliquid-python-sdk/tests/
+      
+      - info_test.py - Info class tests with VCR cassettes
+      - signing_test.py - Signature verification tests
+      - cassettes/ - VCR recordings for HTTP mocking
+      
+      TEST STRATEGY:
+      - Uses pytest with pytest-recording
+      - VCR cassettes for reproducible HTTP tests
+      - Coverage reporting with pytest-cov
+    </existing_tests>
+
+    <api_endpoints_used>
+      BASE URLS (from constants.py):
+      - MAINNET: https://api.hyperliquid.xyz
+      - TESTNET: https://api.hyperliquid-testnet.xyz
+      - LOCAL: http://localhost:3001
+      
+      INFO ENDPOINTS (POST /info):
+      - clearinghouseState, spotClearinghouseState
+      - openOrders, frontendOpenOrders
+      - allMids, meta, spotMeta
+      - metaAndAssetCtxs, spotMetaAndAssetCtxs
+      - userFills, userFillsByTime
+      - fundingHistory, userFunding
+      - l2Book, candleSnapshot
+      - userFees, delegatorSummary
+      - delegations, delegatorRewards
+      - delegatorHistory
+      - orderStatus (by oid or cloid)
+      - referral, subAccounts
+      - userToMultiSigSigners
+      - perpDeployAuctionStatus
+      - spotDeployState
+      - historicalOrders, portfolio
+      - userNonFundingLedgerUpdates
+      - userTwapSliceFills
+      - userVaultEquities, userRole
+      - userRateLimit, extraAgents
+      - userDexAbstraction, perpDexs
+      
+      EXCHANGE ENDPOINTS (POST /exchange):
+      - order, batchModify, cancel, cancelByCloid
+      - scheduleCancel
+      - updateLeverage, updateIsolatedMargin
+      - setReferrer, createSubAccount
+      - usdClassTransfer, sendAsset
+      - subAccountTransfer, subAccountSpotTransfer
+      - vaultTransfer
+      - usdSend, spotSend
+      - tokenDelegate
+      - withdraw3
+      - approveAgent, approveBuilderFee
+      - convertToMultiSigUser
+      - spotDeploy, perpDeploy
+      - CSignerAction, CValidatorAction
+      - multiSig
+      - evmUserModify
+      - agentEnableDexAbstraction
+      - userDexAbstraction
+      - noop
+      
+      WEBSOCKET:
+      - ws[s]://api.hyperliquid.xyz/ws
+      - subscribe/unsubscribe methods
+    </api_endpoints_used>
+  </existing_codebase_analysis>
+
+  <technology_stack>
+    <core_rust_layer>
+      <framework>Rust 1.75+ with Tokio async runtime</framework>
+      <networking>
+        - hyper/reqwest for HTTP clients
+        - tokio-tungstenite for WebSocket
+        - tonic for gRPC server/client
+      </networking>
+      <serialization>
+        - serde + serde_json for JSON handling
+        - prost for Protocol Buffers
+      </serialization>
+      <cryptography>
+        - ring for signing operations
+        - ed25519-dalek for Ethereum-compatible signatures
+      </cryptography>
+      <python_bindings>PyO3 for zero-copy Python interop</python_bindings>
+    </core_rust_layer>
+
+    <python_interface>
+      <version>Python 3.10+</version>
+      <packaging>uv for package management, maturin for Rust builds</packaging>
+      <type_system>
+        - pydantic v2 for validation
+        - mypy strict mode for type checking
+      </type_system>
+      <async_support>asyncio with native Rust async integration</async_support>
+    </python_interface>
+
+    <api_protocols>
+      <rest_api>
+        - OpenAPI 3.1 specification auto-generated from Rust code
+        - utoipa for Rust OpenAPI generation
+      </rest_api>
+      <grpc_internal>
+        - Protocol Buffers for type-safe internal communication
+        - Bidirectional streaming for real-time data
+      </grpc_internal>
+      <websocket>
+        - Native Rust WebSocket client with automatic reconnection
+        - Zero-copy message passing to Python layer
+      </websocket>
+    </api_protocols>
+
+    <documentation>
+      <api_docs>Swagger UI + ReDoc for interactive OpenAPI docs</api_docs>
+      <code_docs>Sphinx for Python, rustdoc for Rust internals</code_docs>
+      <examples>Comprehensive examples in examples/ directory</examples>
+    </documentation>
+
+    <testing_qa>
+      <rust_tests>cargo test with proptest for property-based testing</rust_tests>
+      <python_tests>pytest with hypothesis for property-based testing</python_tests>
+      <integration_tests>testcontainers for end-to-end scenarios</integration_tests>
+      <benchmarking>criterion for Rust, pytest-benchmark for Python layer</benchmarking>
+      <linting>
+        - Rust: clippy (strict mode)
+        - Python: ruff for linting and formatting
+      </linting>
+    </testing_qa>
+  </technology_stack>
+
+  <architecture_reasoning>
+    <graphql_vs_grpc_vs_rest>
+      <rest_api>
+        CHOSEN FOR PUBLIC API:
+        - Hyperliquid backend uses REST, maintain protocol compatibility
+        - Simplest for users to debug (curl, browser dev tools)
+        - Best for request-response patterns (place order, query state)
+        - OpenAPI provides excellent tooling and codegen
+        
+        LIMITATIONS:
+        - Over-fetching/under-fetching data
+        - Multiple round-trips for complex queries
+        - No native streaming (must use WebSocket separately)
+      </rest_api>
+
+      <graphql>
+        NOT CHOSEN:
+        - Adds complexity without clear benefit for trading API
+        - Hyperliquid's backend is REST, would require translation layer
+        - Query flexibility not critical (trading APIs have well-defined operations)
+        - Overhead of query parsing/validation hurts latency-sensitive operations
+        - Better suited for complex data graphs (social networks, etc.)
+        
+        WHEN TO CONSIDER:
+        - If building analytics/portfolio management layer on top
+        - For flexible data queries across multiple trading venues
+      </graphql>
+
+      <grpc>
+        CHOSEN FOR INTERNAL RUST-PYTHON COMMUNICATION:
+        - 7-10x faster serialization than JSON (Protocol Buffers)
+        - Strongly typed contracts with code generation
+        - Bidirectional streaming for real-time market data
+        - Lower CPU and memory overhead for high-frequency operations
+        - HTTP/2 multiplexing reduces connection overhead
+        
+        IMPLEMENTATION STRATEGY:
+        - gRPC server runs in Rust layer
+        - Python layer communicates via gRPC for performance-critical operations
+        - Public Python API abstracts gRPC details (users see Pythonic interface)
+        - Direct REST/WebSocket to Hyperliquid backend (no middleware)
+        
+        EXAMPLE FLOW:
+        Python: sdk.place_order(order) 
+          -> gRPC call to Rust service 
+          -> Rust signs and sends REST request to Hyperliquid 
+          -> Response flows back via gRPC 
+          -> Python receives typed response
+      </grpc>
+    </graphql_vs_grpc_vs_rest>
+
+    <rust_rewrite_reasoning>
+      <performance_benefits>
+        - 10-100x faster JSON parsing (serde vs Python json module)
+        - Zero-copy deserialization where possible
+        - Compile-time optimizations (inlining, dead code elimination)
+        - Memory efficiency: 5-10x less memory than Python objects
+        - Predictable latency: no GIL, no garbage collection pauses
+        - SIMD optimizations for numerical operations
+        
+        BENCHMARKS (estimated vs current Python SDK):
+        - WebSocket message processing: 50-100 microseconds vs 500-2000 microseconds
+        - Order signing: 10-50 microseconds vs 100-500 microseconds
+        - JSON serialization: 1-5 microseconds vs 50-200 microseconds
+        - Connection pooling: near-zero overhead vs Python asyncio overhead
+      </performance_benefits>
+
+      <safety_benefits>
+        - Memory safety: no buffer overflows, use-after-free, data races
+        - Thread safety: Rust's type system prevents concurrent access bugs
+        - Type safety: catch errors at compile time vs runtime
+        - No silent failures: Result and Option types force error handling
+        - Ownership model prevents leaked resources (connections, file handles)
+      </safety_benefits>
+
+      <maintainability>
+        - Refactoring confidence: compiler catches breaking changes
+        - Self-documenting: types encode invariants
+        - Excellent tooling: cargo, rustfmt, clippy, rust-analyzer
+        - Growing ecosystem: crates.io has mature trading/crypto libraries
+      </maintainability>
+
+      <developer_experience>
+        - Python users still write Python (via PyO3 bindings)
+        - Type hints in Python match Rust types exactly
+        - Async/await works naturally across language boundary
+        - Debug builds include full Rust stack traces
+        - Hot path in Rust, convenience layer in Python
+      </developer_experience>
+
+      <tradeoffs>
+        - Longer initial development time (Rust learning curve)
+        - More complex build process (Rust compiler + Python packaging)
+        - Larger binary size (but faster execution)
+        - Fewer Rust developers than Python developers
+        
+        MITIGATION:
+        - Comprehensive documentation and examples
+        - Pre-built wheels for major platforms (Linux, macOS, Windows)
+        - Clear contribution guide with Rust learning resources
+        - Core team maintains Rust, community can contribute Python examples
+      </tradeoffs>
+    </rust_rewrite_reasoning>
+
+    <system_architecture>
+      LAYERED DESIGN:
+      
+      [Python User Code]
+              |
+              v
+      [Python SDK Layer] - pydantic models, type hints, convenience methods
+              |
+              | (PyO3 zero-copy)
+              v
+      [Rust Core Layer] - async runtime, connection pooling, signing, serialization
+              |
+              | (REST API / WebSocket)
+              v
+      [Hyperliquid Backend]
+      
+      
+      RUST CORE MODULES:
+      
+      - hyperliquid_core::client
+        * HTTP client with connection pooling (hyper)
+        * WebSocket client with auto-reconnection
+        * Request signing and authentication
+        * Rate limiting and backoff strategies
+        
+      - hyperliquid_core::types
+        * Strongly typed API models (Order, Position, UserState, etc.)
+        * Serde serialization/deserialization
+        * Validation logic (price precision, quantity constraints)
+        
+      - hyperliquid_core::stream
+        * Real-time market data streaming
+        * Order update subscriptions
+        * Event aggregation and filtering
+        
+      - hyperliquid_core::crypto
+        * EIP-712 signature generation
+        * Wallet management (never exposes private keys to Python)
+        * Nonce handling and replay protection
+        
+      - hyperliquid_core::python_bridge (PyO3)
+        * Async function wrappers for Python asyncio
+        * Type conversion (Rust struct <-> Python dict/class)
+        * Error mapping (Rust Result -> Python exceptions)
+        
+      
+      PYTHON SDK MODULES:
+      
+      - hyperliquid/
+        * __init__.py - main HyperliquidClient class
+        * info.py - read-only market data queries
+        * exchange.py - trading operations (orders, cancels)
+        * websocket.py - streaming data subscriptions
+        * types.py - pydantic models (mirror Rust types)
+        * utils.py - helper functions, formatters
+        * errors.py - exception hierarchy
+    </system_architecture>
+  </architecture_reasoning>
+
+  <core_features>
+    <feature_group name="Market Data (Read-Only)">
+      EXISTING METHODS FROM info.py TO PRESERVE:
+      - meta(dex) - Get perpetual asset metadata
+      - spot_meta() - Get spot asset metadata
+      - meta_and_asset_ctxs() - Combined meta + context
+      - spot_meta_and_asset_ctxs() - Spot combined data
+      - perp_dexs() - List of perpetual DEXes
+      - all_mids(dex) - Mid prices for all assets
+      - l2_snapshot(name) - L2 orderbook snapshot
+      - candles_snapshot(name, interval, start, end) - OHLCV data
+      - funding_history(name, start, end) - Funding rates
+      
+      NEW ENHANCEMENTS:
+      - Streaming meta updates via WebSocket
+      - Background refresh for cached metadata
+      
+      PERFORMANCE TARGET: <10ms P99 latency
+      CACHING: In-memory cache for asset metadata (5min TTL)
+    </feature_group>
+
+    <feature_group name="User Account State">
+      EXISTING METHODS FROM info.py TO PRESERVE:
+      - user_state(address, dex) - Positions, margin, collateral
+      - spot_user_state(address) - Spot balances
+      - open_orders(address, dex) - Current open orders
+      - frontend_open_orders(address, dex) - Orders with UI details
+      - user_fills(address) - Recent trade fills
+      - user_fills_by_time(address, start, end, aggregate) - Fills by time
+      - user_funding_history(user, start, end) - User funding payments
+      - user_fees(address) - Volume and fee tier info
+      - user_staking_summary/delegations/rewards(address) - Staking info
+      - delegator_history(user) - Comprehensive staking history
+      - historical_orders(user) - Up to 2000 historical orders
+      - user_non_funding_ledger_updates(user, start, end)
+      - portfolio(user) - Portfolio performance data
+      - user_twap_slice_fills(user) - TWAP execution fills
+      - user_vault_equities(user) - Vault equity positions
+      - user_role(user) - Account type and permissions
+      - user_rate_limit(user) - API rate limit status
+      - extra_agents(user) - Authorized agent keys
+      - query_order_by_oid/cloid(user, oid/cloid) - Order status
+      - query_referral_state(user) - Referral info
+      - query_sub_accounts(user) - Sub-account list
+      - query_user_to_multi_sig_signers(user) - Multi-sig signers
+      - query_user_dex_abstraction_state(user) - DEX abstraction
+      
+      PERFORMANCE TARGET: <20ms P99 latency
+      CACHING: Optional client-side caching with invalidation
+    </feature_group>
+
+    <feature_group name="Trading Operations">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - order(name, is_buy, sz, limit_px, order_type, reduce_only, cloid, builder)
+      - bulk_orders(order_requests, builder, grouping)
+      - modify_order(oid, name, is_buy, sz, limit_px, order_type, reduce_only, cloid)
+      - bulk_modify_orders_new(modify_requests)
+      - market_open(name, is_buy, sz, px, slippage, cloid, builder)
+      - market_close(coin, sz, px, slippage, cloid, builder)
+      - cancel(name, oid)
+      - cancel_by_cloid(name, cloid)
+      - bulk_cancel(cancel_requests)
+      - bulk_cancel_by_cloid(cancel_requests)
+      - schedule_cancel(time) - Scheduled cancel all
+      - update_leverage(leverage, name, is_cross)
+      - update_isolated_margin(amount, name)
+      
+      ORDER TYPES (from signing.py):
+      - Limit: Alo (Add Liquidity Only), Ioc (Immediate or Cancel), Gtc (Good Till Cancel)
+      - Trigger: TP (Take Profit), SL (Stop Loss) with triggerPx
+      - Grouping: na, normalTpsl, positionTpsl
+      
+      BUILDER FEE SUPPORT:
+      - BuilderInfo: {b: address, f: fee_in_tenths_bps}
+      - approve_builder_fee(builder, max_fee_rate)
+      
+      PERFORMANCE TARGET: <50ms P99 for order placement
+      ATOMIC OPERATIONS: Batch operations are atomic
+      SIGNATURE CACHING: Connection pooling, nonce management
+    </feature_group>
+
+    <feature_group name="Transfers and Assets">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - usd_transfer(amount, destination) - USD send
+      - spot_transfer(amount, destination, token) - Spot token send
+      - usd_class_transfer(amount, to_perp) - Perp <-> Spot transfer
+      - send_asset(destination, source_dex, dest_dex, token, amount)
+      - vault_usd_transfer(vault_address, is_deposit, usd)
+      - sub_account_transfer(sub_account_user, is_deposit, usd)
+      - sub_account_spot_transfer(sub_account_user, is_deposit, token, amount)
+      - withdraw_from_bridge(amount, destination)
+      
+      SIGNING TYPES USED:
+      - USD_SEND_SIGN_TYPES
+      - SPOT_TRANSFER_SIGN_TYPES
+      - WITHDRAW_SIGN_TYPES
+      - USD_CLASS_TRANSFER_SIGN_TYPES
+      - SEND_ASSET_SIGN_TYPES
+    </feature_group>
+
+    <feature_group name="Account and Agent Management">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - approve_agent(name) - Generate and authorize API key
+      - set_referrer(code) - Set referral code
+      - create_sub_account(name) - Create sub-account
+      - convert_to_multi_sig_user(authorized_users, threshold)
+      - agent_enable_dex_abstraction()
+      - user_dex_abstraction(user, enabled)
+      
+      AGENT KEY MANAGEMENT:
+      - Generates new API wallet private key
+      - Returns (response, agent_key) tuple
+      - Agent name is optional
+    </feature_group>
+
+    <feature_group name="Multi-Signature Support">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - multi_sig(multi_sig_user, inner_action, signatures, nonce, vault_address)
+      - convert_to_multi_sig_user(authorized_users, threshold)
+      - query_user_to_multi_sig_signers(multi_sig_user)
+      
+      SIGNING HELPERS (from signing.py):
+      - sign_multi_sig_action()
+      - sign_multi_sig_user_signed_action_payload()
+      - sign_multi_sig_l1_action_payload()
+      - add_multi_sig_types() / add_multi_sig_fields()
+      
+      SIGNING TYPES:
+      - MULTI_SIG_ENVELOPE_SIGN_TYPES
+      - CONVERT_TO_MULTI_SIG_USER_SIGN_TYPES
+    </feature_group>
+
+    <feature_group name="Staking and Delegation">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - token_delegate(validator, wei, is_undelegate)
+      
+      EXISTING INFO METHODS:
+      - user_staking_summary(address)
+      - user_staking_delegations(address)
+      - user_staking_rewards(address)
+      - delegator_history(user)
+      
+      SIGNING TYPES:
+      - TOKEN_DELEGATE_TYPES
+    </feature_group>
+
+    <feature_group name="Token Deployment (Spot)">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - spot_deploy_register_token(name, sz_decimals, wei_decimals, max_gas, full_name)
+      - spot_deploy_user_genesis(token, user_and_wei, existing_token_and_wei)
+      - spot_deploy_genesis(token, max_supply, no_hyperliquidity)
+      - spot_deploy_register_spot(base_token, quote_token)
+      - spot_deploy_register_hyperliquidity(spot, start_px, order_sz, n_orders, n_seeded_levels)
+      - spot_deploy_set_deployer_trading_fee_share(token, share)
+      - spot_deploy_enable_freeze_privilege(token)
+      - spot_deploy_freeze_user(token, user, freeze)
+      - spot_deploy_revoke_freeze_privilege(token)
+      - spot_deploy_enable_quote_token(token)
+      
+      INFO METHOD:
+      - query_spot_deploy_auction_status(user)
+    </feature_group>
+
+    <feature_group name="Perpetual Deployment">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - perp_deploy_register_asset(dex, max_gas, coin, sz_decimals, oracle_px, 
+          margin_table_id, only_isolated, schema)
+      - perp_deploy_set_oracle(dex, oracle_pxs, all_mark_pxs, external_perp_pxs)
+      
+      SCHEMA INPUT (PerpDexSchemaInput):
+      - fullName: str
+      - collateralToken: int
+      - oracleUpdater: Optional[str]
+      
+      INFO METHOD:
+      - query_perp_deploy_auction_status()
+    </feature_group>
+
+    <feature_group name="Validator Operations">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - c_signer_unjail_self()
+      - c_signer_jail_self()
+      - c_validator_register(node_ip, name, description, delegations_disabled,
+          commission_bps, signer, unjailed, initial_wei)
+      - c_validator_change_profile(node_ip, name, description, unjailed,
+          disable_delegations, commission_bps, signer)
+      - c_validator_unregister()
+    </feature_group>
+
+    <feature_group name="EVM Integration">
+      EXISTING METHODS FROM exchange.py TO PRESERVE:
+      - use_big_blocks(enable)
+    </feature_group>
+
+    <feature_group name="WebSocket Real-Time Streams">
+      EXISTING SUBSCRIPTION TYPES FROM types.py/websocket_manager.py:
+      - allMids - All mid prices
+      - l2Book(coin) - L2 orderbook updates
+      - trades(coin) - Recent trades stream
+      - bbo(coin) - Best bid/offer
+      - candle(coin, interval) - Candlestick data
+      - userEvents(user) - User trading events
+      - userFills(user) - User fill notifications
+      - orderUpdates(user) - Order status updates
+      - userFundings(user) - Funding payments
+      - userNonFundingLedgerUpdates(user) - Ledger updates
+      - webData2(user) - Web interface data
+      - activeAssetCtx(coin) - Active asset context
+      - activeAssetData(user, coin) - User asset data
+      
+      MESSAGE TYPES (WsMsg union):
+      - AllMidsMsg, L2BookMsg, TradesMsg
+      - BboMsg, PongMsg
+      - UserEventsMsg, UserFillsMsg
+      - ActiveAssetCtxMsg, ActiveSpotAssetCtxMsg
+      - ActiveAssetDataMsg, OtherWsMsg
+      
+      CURRENT IMPLEMENTATION ISSUES:
+      - Uses blocking websocket-client in separate thread
+      - No auto-reconnection
+      - Limited error handling
+      
+      RUST IMPROVEMENTS:
+      - tokio-tungstenite for async WebSocket
+      - Automatic reconnection with exponential backoff
+      - Circular buffer for burst handling
+      - Zero-copy message passing to Python via PyO3
+      
+      PERFORMANCE TARGET: <1ms message processing in Rust layer
+    </feature_group>
+
+    <feature_group name="Advanced Order Types (NEW)">
+      NOT IN ORIGINAL SDK - NEW IMPLEMENTATION:
+      - TWAP (Time-Weighted Average Price) orders
+      - Iceberg orders (hidden quantity)
+      - Trailing stop orders
+      - Conditional orders (if-then-else logic)
+      
+      EXISTING PARTIAL SUPPORT:
+      - schedule_cancel(time) - Scheduled cancel all (10/day limit)
+      - Trigger orders with TP/SL via order_type
+      
+      IMPLEMENTATION: Rust state machine for order logic
+      PERSISTENCE: Optional SQLite storage for order state
+    </feature_group>
+
+    <feature_group name="Risk Management (NEW)">
+      NOT IN ORIGINAL SDK - NEW IMPLEMENTATION:
+      - Position size limits per symbol
+      - Maximum drawdown monitoring
+      - Order rate limiting (self-imposed)
+      - Kill switch (emergency stop all trading)
+      - Pre-trade risk checks (margin, exposure)
+      
+      RELATED EXISTING FUNCTIONALITY:
+      - set_expires_after(expires_after) - Action expiry timestamps
+      - user_rate_limit(user) - Query API rate limits
+      
+      IMPLEMENTATION: Configurable risk rules in TOML config
+      ENFORCEMENT: Rust layer enforces before API calls
+    </feature_group>
+
+    <feature_group name="OpenAPI Documentation">
+      - Auto-generated OpenAPI 3.1 spec from Rust code
+      - Interactive Swagger UI for testing
+      - ReDoc for beautiful documentation
+      - Code generation for multiple languages (TypeScript, Go, Java)
+      - Example requests/responses for every endpoint
+      - Authentication flow documentation
+      
+      TOOLING: utoipa for Rust annotations, utoipa-swagger-ui for UI
+      UPDATE: Docs regenerated on every build
+      HOSTING: Served via built-in HTTP server or static files
+    </feature_group>
+
+    <feature_group name="Developer Experience">
+      - Comprehensive type hints (mypy strict compatible)
+      - Async and sync interfaces (asyncio + blocking wrappers)
+      - Structured logging with trace IDs
+      - Prometheus metrics export
+      - CLI tool for quick operations
+      - Interactive Python shell mode
+      
+      EXAMPLES:
+      ```python
+      # Async usage
+      async with HyperliquidClient(api_key, api_secret) as client:
+          positions = await client.get_positions()
+          order = await client.place_order(Order(...))
+      
+      # Sync usage
+      client = HyperliquidClient.sync(api_key, api_secret)
+      positions = client.get_positions()
+      ```
+    </feature_group>
+
+    <feature_group name="Testing and Validation">
+      - Testnet support (configurable endpoints)
+      - Mock server for testing (no real API calls)
+      - Replay mode (record/replay for debugging)
+      - Schema validation on all requests/responses
+      - Property-based testing (hypothesis + proptest)
+      
+      TOOLING: Built-in test harness with fixtures
+      CI/CD: Automated tests on every commit
+    </feature_group>
+  </core_features>
+
+  <security_enhancements>
+    <key_management>
+      - NEVER expose private keys to Python layer
+      - Signing happens only in Rust
+      - Support for hardware wallets (Ledger, Trezor) via USB HID
+      - Encrypted key storage with OS keychain integration
+      - API key rotation without downtime
+      - Separate keys for trading vs read-only access
+      
+      IMPLEMENTATION:
+      - Rust crypto module holds keys in secure memory
+      - Python receives only signatures, never raw keys
+      - mlock() to prevent keys from swapping to disk
+    </key_management>
+
+    <network_security>
+      - Certificate pinning for Hyperliquid API
+      - TLS 1.3 with strong cipher suites only
+      - Request/response validation against schema
+      - Rate limiting to prevent self-DoS
+      - Exponential backoff on errors
+      - Timeout on all network operations
+      
+      CONFIGURATION:
+      - Configurable timeouts per operation type
+      - Max retries and backoff strategy in config
+    </network_security>
+
+    <audit_and_monitoring>
+      - Structured logging of all trading operations
+      - Tamper-proof audit log (append-only SQLite with checksums)
+      - Pre-trade and post-trade compliance hooks
+      - Anomaly detection (unusual order patterns)
+      - Alert system for critical events
+      - Prometheus metrics for monitoring
+      
+      METRICS:
+      - Order placement latency (histogram)
+      - WebSocket message latency (histogram)
+      - Error rate per endpoint (counter)
+      - Active positions and notional exposure (gauge)
+    </audit_and_monitoring>
+
+    <input_validation>
+      - Strict schema validation on all inputs
+      - Price and quantity precision checks
+      - Range checks (no negative prices, etc.)
+      - Symbol whitelist validation
+      - Anti-replay protection (nonce validation)
+      - Request size limits (prevent memory exhaustion)
+      
+      IMPLEMENTATION:
+      - Pydantic validation in Python layer
+      - Redundant validation in Rust layer
+      - Fail fast on invalid inputs
+    </input_validation>
+
+    <error_handling>
+      - Typed errors (no string exceptions)
+      - Detailed error context (what failed, why, how to fix)
+      - No information leakage in error messages
+      - Retry logic for transient errors
+      - Circuit breaker pattern for persistent failures
+      - Graceful degradation (cache stale data if API is down)
+      
+      ERROR HIERARCHY:
+      - HyperliquidError (base)
+        - NetworkError (connection, timeout)
+        - AuthenticationError (invalid signature, expired key)
+        - ValidationError (invalid input)
+        - RateLimitError (429 response)
+        - APIError (4xx/5xx from backend)
+        - InternalError (SDK bugs - should never happen)
+    </error_handling>
+
+    <sandboxing>
+      - Read-only mode (disable all trading operations)
+      - Testnet mode (use testnet endpoints)
+      - Dry-run mode (validate but don't submit orders)
+      - Paper trading mode (simulate fills locally)
+      
+      USAGE:
+      ```python
+      client = HyperliquidClient(
+          api_key=key,
+          mode=Mode.DRY_RUN,  # or READ_ONLY, PAPER_TRADING
+      )
+      ```
+    </sandboxing>
+  </security_enhancements>
+
+  <performance_optimizations>
+    <rust_optimizations>
+      - Link-time optimization (LTO) for release builds
+      - Profile-guided optimization (PGO) for hot paths
+      - SIMD vectorization for data processing
+      - Zero-copy deserialization with serde::Deserialize
+      - Connection pooling (reuse HTTP/WebSocket connections)
+      - Lock-free data structures where possible
+      
+      BENCHMARKING:
+      - Criterion benchmarks in benches/
+      - Flamegraph profiling for hot paths
+      - Continuous benchmarking in CI
+    </rust_optimizations>
+
+    <caching_strategy>
+      - In-memory cache for static data (asset metadata)
+      - TTL-based expiration with background refresh
+      - LRU eviction for bounded memory usage
+      - Optional Redis integration for distributed caching
+      
+      CONFIGURATION:
+      ```toml
+      [cache]
+      enabled = true
+      max_size_mb = 100
+      default_ttl_seconds = 300
+      ```
+    </caching_strategy>
+
+    <connection_management>
+      - HTTP/2 connection pooling (1 connection per host)
+      - WebSocket keepalive (ping/pong every 30s)
+      - Automatic reconnection with jitter
+      - Lazy connection initialization
+      - Connection health checks
+      
+      TUNING:
+      - TCP_NODELAY for low latency
+      - SO_KEEPALIVE for connection detection
+      - Configurable timeouts per operation
+    </connection_management>
+
+    <async_runtime>
+      - Tokio runtime with work-stealing scheduler
+      - Dedicated thread pool for blocking operations
+      - Async I/O for all network operations
+      - Backpressure handling (slow consumer protection)
+      
+      CONFIGURATION:
+      - Worker threads = num_cpus (configurable)
+      - Max blocking threads = 512 (configurable)
+    </async_runtime>
+
+    <memory_optimization>
+      - Arena allocators for short-lived objects
+      - Object pooling for frequently allocated types
+      - String interning for symbol names
+      - Compact data structures (bit packing where possible)
+      - Memory profiling in tests
+      
+      TARGET: <100MB memory usage for typical workload
+    </memory_optimization>
+
+    <serialization>
+      - serde_json with raw value optimization
+      - Protocol Buffers for gRPC
+      - Zero-copy string parsing where possible
+      - Lazy deserialization (parse only needed fields)
+      
+      BENCHMARKS:
+      - serde_json: ~1-5 microseconds per message
+      - protobuf: ~100-500 nanoseconds per message
+      - 10-50x faster than Python json module
+    </serialization>
+  </performance_optimizations>
+
+  <database_schema>
+    <optional_persistence>
+      SQLite database for optional features (audit log, order state persistence).
+      Users can disable persistence for stateless operation.
+    </optional_persistence>
+
+    <table name="audit_log">
+      - id INTEGER PRIMARY KEY AUTOINCREMENT
+      - timestamp INTEGER NOT NULL (Unix timestamp in microseconds)
+      - operation TEXT NOT NULL (place_order, cancel_order, etc.)
+      - payload TEXT NOT NULL (JSON of request)
+      - response TEXT (JSON of response, NULL if error)
+      - error TEXT (error message if failed)
+      - checksum TEXT NOT NULL (SHA256 of row for tamper detection)
+      - INDEX idx_timestamp ON audit_log(timestamp)
+    </table>
+
+    <table name="order_state">
+      - order_id TEXT PRIMARY KEY
+      - symbol TEXT NOT NULL
+      - order_type TEXT NOT NULL
+      - side TEXT NOT NULL
+      - price REAL
+      - quantity REAL NOT NULL
+      - filled_quantity REAL DEFAULT 0
+      - status TEXT NOT NULL (pending, filled, cancelled, rejected)
+      - created_at INTEGER NOT NULL
+      - updated_at INTEGER NOT NULL
+      - metadata TEXT (JSON for custom fields)
+      - INDEX idx_symbol_status ON order_state(symbol, status)
+    </table>
+
+    <table name="config_versions">
+      - id INTEGER PRIMARY KEY AUTOINCREMENT
+      - timestamp INTEGER NOT NULL
+      - config TEXT NOT NULL (TOML config snapshot)
+      - reason TEXT (why config changed)
+    </table>
+  </database_schema>
+
+  <api_structure>
+    <openapi_generation>
+      EXISTING PARTIAL OPENAPI DEFINITIONS:
+      Located at /media/bowen/DATA/projects/ecommerce/hyperliquid-python-sdk/api/
+      - components.yaml - Shared schema components
+      - info/allmids.yaml - AllMids endpoint schema
+      - info/assetctxs.yaml - Asset contexts schema
+      - info/candle.yaml - Candlestick schema
+      - info/l2book.yaml - L2 orderbook schema
+      - info/userstate.yaml - User state schema
+      
+      NEW RUST IMPLEMENTATION:
+      ```rust
+      use utoipa::{OpenApi, ToSchema};
+      
+      #[derive(OpenApi)]
+      #[openapi(
+          info(
+              title = "Hyperliquid API",
+              version = "1.0.0",
+              description = "Hyperliquid DEX trading API - Rust SDK documentation"
+          ),
+          paths(
+              // Info endpoints (from info.py)
+              info::meta,
+              info::spot_meta,
+              info::all_mids,
+              info::l2_book,
+              info::candles_snapshot,
+              info::user_state,
+              info::spot_user_state,
+              info::open_orders,
+              info::frontend_open_orders,
+              info::user_fills,
+              info::user_fills_by_time,
+              info::funding_history,
+              info::user_funding_history,
+              info::user_fees,
+              info::user_staking_summary,
+              info::query_order_by_oid,
+              info::historical_orders,
+              info::portfolio,
+              
+              // Exchange endpoints (from exchange.py)
+              exchange::order,
+              exchange::bulk_orders,
+              exchange::modify_order,
+              exchange::cancel,
+              exchange::bulk_cancel,
+              exchange::schedule_cancel,
+              exchange::update_leverage,
+              exchange::usd_transfer,
+              exchange::spot_transfer,
+              exchange::vault_usd_transfer,
+              exchange::approve_agent,
+              exchange::approve_builder_fee,
+              exchange::token_delegate,
+              exchange::withdraw_from_bridge,
+              
+              // WebSocket (documentation only)
+              websocket::subscribe,
+              websocket::unsubscribe,
+          ),
+          components(
+              schemas(
+                  // Core types (from types.py)
+                  Meta, SpotMeta, AssetInfo, SpotAssetInfo, SpotTokenInfo,
+                  UserState, Position, MarginSummary,
+                  Order, OrderRequest, OrderType, OrderWire,
+                  L2Book, L2Level,
+                  Candle,
+                  Fill, Trade,
+                  Cloid, BuilderInfo,
+                  
+                  // Subscription types
+                  Subscription, WsMsg,
+                  AllMidsData, L2BookData, TradesData,
+                  UserEventsData, UserFillsData,
+                  
+                  // Error types
+                  ClientError, ServerError,
+              )
+          ),
+          tags(
+              (name = "info", description = "Market data and account queries"),
+              (name = "exchange", description = "Trading and transfer operations"),
+              (name = "websocket", description = "Real-time data subscriptions"),
+              (name = "staking", description = "Token delegation and rewards"),
+              (name = "deploy", description = "Token and perpetual deployment"),
+          )
+      )]
+      struct ApiDoc;
+      
+      // Auto-generate openapi.json
+      let openapi_json = ApiDoc::openapi().to_pretty_json().unwrap();
+      ```
+      
+      OUTPUT: openapi/openapi.json in OpenAPI 3.1 format
+      SERVING: Swagger UI at http://localhost:8080/docs
+      CODEGEN: Generate client SDKs for TypeScript, Go, Java, etc.
+      MIGRATION: Merge existing YAML schemas from api/ directory
+    </openapi_generation>
+
+    <rest_endpoints>
+      BASE URLS (from constants.py):
+      - MAINNET: https://api.hyperliquid.xyz
+      - TESTNET: https://api.hyperliquid-testnet.xyz
+      - LOCAL: http://localhost:3001
+      
+      NOTE: Unlike typical REST APIs, Hyperliquid uses POST for all endpoints.
+      The "type" field in request body determines the operation.
+      
+      PUBLIC INFO ENDPOINTS (POST /info):
+      Request format: {"type": "...", ...params}
+      
+      Market Data (no auth):
+      - {"type": "meta"} / {"type": "meta", "dex": "..."}
+      - {"type": "spotMeta"}
+      - {"type": "metaAndAssetCtxs"}
+      - {"type": "spotMetaAndAssetCtxs"}
+      - {"type": "perpDexs"}
+      - {"type": "allMids"} / {"type": "allMids", "dex": "..."}
+      - {"type": "l2Book", "coin": "BTC"}
+      - {"type": "candleSnapshot", "req": {...}}
+      - {"type": "fundingHistory", "coin": "...", "startTime": ..., "endTime": ...}
+      
+      User Data (no auth, but user-specific):
+      - {"type": "clearinghouseState", "user": "0x...", "dex": "..."}
+      - {"type": "spotClearinghouseState", "user": "0x..."}
+      - {"type": "openOrders", "user": "0x...", "dex": "..."}
+      - {"type": "frontendOpenOrders", "user": "0x...", "dex": "..."}
+      - {"type": "userFills", "user": "0x..."}
+      - {"type": "userFillsByTime", "user": "0x...", "startTime": ..., ...}
+      - {"type": "userFunding", "user": "0x...", "startTime": ...}
+      - {"type": "userFees", "user": "0x..."}
+      - {"type": "delegatorSummary", "user": "0x..."}
+      - {"type": "delegations", "user": "0x..."}
+      - {"type": "delegatorRewards", "user": "0x..."}
+      - {"type": "delegatorHistory", "user": "0x..."}
+      - {"type": "orderStatus", "user": "0x...", "oid": ...}
+      - {"type": "referral", "user": "0x..."}
+      - {"type": "subAccounts", "user": "0x..."}
+      - {"type": "userToMultiSigSigners", "user": "0x..."}
+      - {"type": "historicalOrders", "user": "0x..."}
+      - {"type": "userNonFundingLedgerUpdates", "user": "0x...", "startTime": ...}
+      - {"type": "portfolio", "user": "0x..."}
+      - {"type": "userTwapSliceFills", "user": "0x..."}
+      - {"type": "userVaultEquities", "user": "0x..."}
+      - {"type": "userRole", "user": "0x..."}
+      - {"type": "userRateLimit", "user": "0x..."}
+      - {"type": "extraAgents", "user": "0x..."}
+      - {"type": "userDexAbstraction", "user": "0x..."}
+      - {"type": "perpDeployAuctionStatus"}
+      - {"type": "spotDeployState", "user": "0x..."}
+      
+      EXCHANGE ENDPOINTS (POST /exchange):
+      Request format: {"action": {...}, "nonce": ..., "signature": {...}, ...}
+      
+      Requires EIP-712 signature (L1 Action or User-Signed):
+      - action.type: "order" - Place orders
+      - action.type: "batchModify" - Modify orders
+      - action.type: "cancel" - Cancel by order ID
+      - action.type: "cancelByCloid" - Cancel by client order ID
+      - action.type: "scheduleCancel" - Schedule future cancel
+      - action.type: "updateLeverage" - Change leverage
+      - action.type: "updateIsolatedMargin" - Adjust margin
+      - action.type: "setReferrer" - Set referral code
+      - action.type: "createSubAccount" - Create sub-account
+      - action.type: "subAccountTransfer" - Transfer to/from sub-account
+      - action.type: "subAccountSpotTransfer" - Spot transfer
+      - action.type: "vaultTransfer" - Vault deposit/withdraw
+      - action.type: "spotDeploy" - Token deployment operations
+      - action.type: "perpDeploy" - Perpetual deployment
+      - action.type: "CSignerAction" - C-signer operations
+      - action.type: "CValidatorAction" - Validator operations
+      - action.type: "multiSig" - Multi-signature transactions
+      - action.type: "evmUserModify" - EVM settings
+      - action.type: "agentEnableDexAbstraction"
+      - action.type: "noop" - No-operation (testing)
+      
+      User-Signed Actions (separate signing flow):
+      - action.type: "usdSend" - USD transfer
+      - action.type: "spotSend" - Spot token transfer
+      - action.type: "withdraw3" - Bridge withdrawal
+      - action.type: "usdClassTransfer" - Perp <-> Spot
+      - action.type: "sendAsset" - Cross-DEX asset transfer
+      - action.type: "tokenDelegate" - Staking delegation
+      - action.type: "approveAgent" - Agent key approval
+      - action.type: "approveBuilderFee" - Builder fee approval
+      - action.type: "convertToMultiSigUser" - Multi-sig setup
+      - action.type: "userDexAbstraction" - DEX abstraction toggle
+      
+      REQUEST SIGNING (from signing.py):
+      L1 Actions:
+      1. Pack action with msgpack
+      2. Append nonce (8 bytes big-endian)
+      3. Append vault flag (0x00 or 0x01 + address)
+      4. Append expires_after if set (0x00 + 8 bytes)
+      5. Keccak256 hash
+      6. Construct phantom agent
+      7. EIP-712 sign
+      
+      User-Signed Actions:
+      1. Set signatureChainId (0x66eee) and hyperliquidChain
+      2. Construct EIP-712 typed data
+      3. Sign with wallet
+    </rest_endpoints>
+
+    <grpc_internal_service>
+      service HyperliquidCore {
+        // Market data (unary)
+        rpc GetAssets(Empty) returns (AssetsResponse);
+        rpc GetOrderbook(OrderbookRequest) returns (OrderbookResponse);
+        
+        // Trading (unary)
+        rpc PlaceOrder(PlaceOrderRequest) returns (OrderResponse);
+        rpc CancelOrder(CancelOrderRequest) returns (CancelResponse);
+        
+        // Streaming (server-side streaming)
+        rpc StreamOrderbook(SubscribeRequest) returns (stream OrderbookUpdate);
+        rpc StreamUserUpdates(SubscribeRequest) returns (stream UserUpdate);
+        
+        // Bidirectional streaming
+        rpc TradingStream(stream TradingCommand) returns (stream TradingEvent);
+      }
+      
+      INTERNAL ONLY: gRPC server runs in Rust, Python client connects via localhost
+      PERFORMANCE: ~100 microseconds round-trip for simple calls
+    </grpc_internal_service>
+
+    <websocket_api>
+      SUBSCRIPTION FORMAT:
+      {
+        "method": "subscribe",
+        "subscription": {
+          "type": "trades|l2Book|user",
+          "coin": "BTC",   // optional, for trades/l2Book
+          "user": "0x..."  // required for user subscription
+        }
+      }
+      
+      MESSAGE FORMAT:
+      {
+        "channel": "trades",
+        "data": {
+          "coin": "BTC",
+          "trades": [
+            {"px": "50000", "sz": "0.1", "time": 1234567890, "side": "B"}
+          ]
+        }
+      }
+      
+      IMPLEMENTATION:
+      - Rust maintains WebSocket connection
+      - Messages parsed and validated in Rust
+      - Python receives typed objects via zero-copy bridge
+      - Automatic reconnection on disconnect
+    </websocket_api>
+  </api_structure>
+
+  <project_structure>
+    NEW PROJECT LOCATION:
+    /media/bowen/DATA/projects/ecommerce/hyperliquid-rs/
+    
+    ORIGINAL SDK REFERENCE:
+    /media/bowen/DATA/projects/ecommerce/hyperliquid-python-sdk/
+    
+    hyperliquid-rs/
+    ├── Cargo.toml                      # Rust workspace config
+    ├── pyproject.toml                  # Python package config (maturin)
+    ├── README.md
+    ├── LICENSE
+    ├── .github/workflows/
+    │   ├── ci.yml                      # Rust + Python tests
+    │   ├── release.yml                 # Build wheels for PyPI
+    │   └── benchmark.yml               # Performance tracking
+    │
+    ├── crates/
+    │   ├── hyperliquid-core/           # Core Rust library
+    │   │   ├── Cargo.toml
+    │   │   ├── src/
+    │   │   │   ├── lib.rs
+    │   │   │   ├── client/             # HTTP/WebSocket clients
+    │   │   │   │   ├── mod.rs
+    │   │   │   │   ├── http.rs         # reqwest-based HTTP (replaces api.py)
+    │   │   │   │   └── websocket.rs    # tokio-tungstenite (replaces websocket_manager.py)
+    │   │   │   ├── types/              # API types with serde
+    │   │   │   │   ├── mod.rs
+    │   │   │   │   ├── info.rs         # Info response types (from types.py)
+    │   │   │   │   ├── exchange.rs     # Order/action types
+    │   │   │   │   ├── websocket.rs    # WsMsg types (from types.py)
+    │   │   │   │   └── cloid.rs        # Cloid implementation (from types.py)
+    │   │   │   ├── crypto/             # Signing and key management
+    │   │   │   │   ├── mod.rs
+    │   │   │   │   ├── signing.rs      # EIP-712 signing (replaces signing.py)
+    │   │   │   │   ├── action_hash.rs  # msgpack + keccak hashing
+    │   │   │   │   └── wallet.rs       # Secure key storage
+    │   │   │   ├── info/               # Info API implementation
+    │   │   │   │   ├── mod.rs          # (replaces info.py)
+    │   │   │   │   └── cache.rs        # In-memory metadata cache
+    │   │   │   ├── exchange/           # Exchange API implementation
+    │   │   │   │   ├── mod.rs          # (replaces exchange.py)
+    │   │   │   │   ├── orders.rs       # Order operations
+    │   │   │   │   ├── transfers.rs    # USD/spot transfers
+    │   │   │   │   └── deploy.rs       # Spot/perp deployment
+    │   │   │   ├── stream/             # Real-time data streaming
+    │   │   │   │   ├── mod.rs
+    │   │   │   │   ├── manager.rs      # Subscription management
+    │   │   │   │   └── buffer.rs       # Circular buffer
+    │   │   │   └── error.rs            # (replaces utils/error.py)
+    │   │   ├── tests/                  # Integration tests
+    │   │   └── benches/                # Criterion benchmarks
+    │   │
+    │   ├── hyperliquid-python/         # PyO3 bindings
+    │   │   ├── Cargo.toml
+    │   │   └── src/
+    │   │       ├── lib.rs              # Python module entry point
+    │   │       ├── client.rs           # Python client wrapper
+    │   │       ├── types.rs            # Type conversions (Rust <-> Python)
+    │   │       ├── info.rs             # Python Info class
+    │   │       ├── exchange.rs         # Python Exchange class
+    │   │       └── stream.rs           # Async stream wrapper
+    │   │
+    │   └── hyperliquid-grpc/           # gRPC server (optional)
+    │       ├── Cargo.toml
+    │       ├── proto/
+    │       │   └── hyperliquid.proto
+    │       └── src/
+    │           └── server.rs
+    │
+    ├── python/
+    │   ├── hyperliquid_rs/             # Python package (new name to avoid conflicts)
+    │   │   ├── __init__.py
+    │   │   ├── client.py               # High-level Python API
+    │   │   ├── info.py                 # Market data methods (thin wrapper)
+    │   │   ├── exchange.py             # Trading methods (thin wrapper)
+    │   │   ├── websocket.py            # Streaming wrapper
+    │   │   ├── types.py                # Pydantic models (mirror Rust types)
+    │   │   ├── errors.py               # Exception hierarchy
+    │   │   ├── utils/
+    │   │   │   ├── __init__.py
+    │   │   │   └── constants.py        # API URLs (from original)
+    │   │   └── compat.py               # Compatibility layer for old SDK API
+    │   ├── tests/
+    │   │   ├── test_client.py
+    │   │   ├── test_orders.py
+    │   │   ├── test_info.py
+    │   │   ├── test_signing.py
+    │   │   ├── cassettes/              # Migrated from original tests/
+    │   │   └── conftest.py             # pytest fixtures
+    │   └── examples/
+    │       ├── basic_order.py          # Migrated from original
+    │       ├── basic_market_order.py
+    │       ├── basic_ws.py
+    │       ├── stream_orderbook.py
+    │       ├── twap_order.py           # New: TWAP implementation
+    │       ├── risk_management.py      # New: Risk controls demo
+    │       └── ... (45+ examples migrated)
+    │
+    ├── docs/
+    │   ├── architecture.md
+    │   ├── api_reference.md            # Generated from OpenAPI
+    │   ├── performance.md
+    │   ├── security.md
+    │   └── migration_guide.md          # For users of old SDK
+    │
+    ├── config/
+    │   ├── default.toml                # Default configuration
+    │   └── testnet.toml                # Testnet configuration
+    │
+    ├── openapi/
+    │   ├── openapi.json                # Auto-generated OpenAPI 3.1 spec
+    │   └── swagger-ui/                 # Static Swagger UI files
+    │
+    └── scripts/
+        ├── generate_openapi.sh         # Generate OpenAPI spec
+        ├── build_wheels.sh             # Build Python wheels
+        ├── benchmark.sh                # Run benchmarks
+        └── migrate_from_original.py    # Helper to migrate config from old SDK
+  </project_structure>
+
+  <module_mapping>
+    Mapping from original SDK to new Rust implementation:
+    
+    ORIGINAL FILE                          | NEW RUST/PYTHON FILES
+    ---------------------------------------|-----------------------------------------------
+    hyperliquid/api.py                     | crates/hyperliquid-core/src/client/http.rs
+    hyperliquid/info.py                    | crates/hyperliquid-core/src/info/mod.rs
+                                           | python/hyperliquid_rs/info.py (thin wrapper)
+    hyperliquid/exchange.py                | crates/hyperliquid-core/src/exchange/mod.rs
+                                           | crates/hyperliquid-core/src/exchange/orders.rs
+                                           | crates/hyperliquid-core/src/exchange/transfers.rs
+                                           | crates/hyperliquid-core/src/exchange/deploy.rs
+                                           | python/hyperliquid_rs/exchange.py (thin wrapper)
+    hyperliquid/websocket_manager.py       | crates/hyperliquid-core/src/client/websocket.rs
+                                           | crates/hyperliquid-core/src/stream/manager.rs
+                                           | python/hyperliquid_rs/websocket.py
+    hyperliquid/utils/signing.py           | crates/hyperliquid-core/src/crypto/signing.rs
+                                           | crates/hyperliquid-core/src/crypto/action_hash.rs
+    hyperliquid/utils/types.py             | crates/hyperliquid-core/src/types/*.rs
+                                           | python/hyperliquid_rs/types.py (pydantic)
+    hyperliquid/utils/constants.py         | python/hyperliquid_rs/utils/constants.py
+    hyperliquid/utils/error.py             | crates/hyperliquid-core/src/error.rs
+                                           | python/hyperliquid_rs/errors.py
+    
+    PyO3 BINDINGS:
+    - All Rust modules exposed via crates/hyperliquid-python/src/*.rs
+    - Python wrappers in python/hyperliquid_rs/*.py call Rust directly
+    
+    BACKWARDS COMPATIBILITY:
+    - python/hyperliquid_rs/compat.py provides API-compatible wrappers
+    - Users can import from hyperliquid_rs.compat for drop-in replacement
+  </module_mapping>
+
+  <build_and_deployment>
+    <build_process>
+      1. Rust compilation: cargo build --release (with LTO, PGO)
+      2. Python wheel building: maturin build --release --features pyo3
+      3. OpenAPI spec generation: cargo run --bin generate-openapi
+      4. Documentation: cargo doc + sphinx-build for Python
+      
+      TARGETS: Linux (x86_64, aarch64), macOS (x86_64, Apple Silicon), Windows (x86_64)
+      
+      PRE-BUILT WHEELS: Upload to PyPI for easy installation
+      ```bash
+      pip install hyperliquid-rs
+      ```
+    </build_process>
+
+    <ci_cd>
+      - GitHub Actions for CI/CD
+      - Automated tests on every PR (Rust + Python)
+      - Benchmark regression detection
+      - Security audit (cargo audit + pip-audit)
+      - Automatic wheel building and PyPI publishing on release tags
+      
+      TEST MATRIX:
+      - Rust: stable, beta, nightly
+      - Python: 3.10, 3.11, 3.12
+      - OS: Ubuntu, macOS, Windows
+    </ci_cd>
+
+    <versioning>
+      - Semantic versioning (MAJOR.MINOR.PATCH)
+      - Rust and Python versions kept in sync
+      - Changelog generation from conventional commits
+      
+      RELEASE PROCESS:
+      1. cargo release patch (bumps version, creates tag)
+      2. GitHub Actions builds wheels and publishes to PyPI
+      3. Documentation auto-published to docs site
+    </versioning>
+  </build_and_deployment>
+
+  <success_criteria>
+    <performance_metrics>
+      - Order placement latency: <50ms P99 (vs 200ms+ in current SDK)
+      - WebSocket message processing: <1ms P99 (vs 10ms+ in current SDK)
+      - Memory usage: <100MB for typical workload
+      - CPU usage: <5% idle, <50% under load
+      - JSON parsing: 10x faster than current SDK
+    </performance_metrics>
+
+    <functional_requirements>
+      - 100% API coverage of Hyperliquid public API
+      - All features from original SDK implemented
+      - Advanced order types (TWAP, iceberg) functional
+      - WebSocket reconnection works reliably
+      - Risk management features prevent catastrophic errors
+    </functional_requirements>
+
+    <quality_metrics>
+      - Test coverage: >90% for Rust, >80% for Python
+      - Zero critical security vulnerabilities (cargo audit)
+      - Linting passes (clippy strict mode, ruff)
+      - Type checking passes (mypy strict mode)
+      - All examples run successfully
+    </quality_metrics>
+
+    <documentation>
+      - Comprehensive API reference from OpenAPI spec
+      - Architecture documentation with diagrams
+      - Migration guide from old SDK
+      - 20+ examples covering common use cases
+      - Performance tuning guide
+      - Security best practices guide
+    </documentation>
+
+    <developer_experience>
+      - Installation via pip install hyperliquid-rs (no Rust toolchain required)
+      - Type hints work in IDEs (autocomplete, type checking)
+      - Clear error messages with actionable suggestions
+      - Structured logging for debugging
+      - Interactive Swagger UI for API exploration
+    </developer_experience>
+
+    <production_readiness>
+      - Battle-tested on testnet
+      - Audit log for compliance
+      - Prometheus metrics for monitoring
+      - Graceful shutdown (no order loss)
+      - Circuit breaker pattern for fault tolerance
+      - 24/7 operation without memory leaks
+    </production_readiness>
+  </success_criteria>
+
+  <timeline_estimate>
+    Phase 1 (Weeks 1-4): Core Rust Infrastructure
+    - HTTP client with connection pooling
+    - WebSocket client with reconnection
+    - Request signing and authentication
+    - Basic types and serialization
+    - Property-based tests
+    
+    Phase 2 (Weeks 5-8): API Implementation
+    - All REST endpoints implemented
+    - WebSocket subscriptions working
+    - PyO3 bindings for core functionality
+    - Python wrapper layer
+    - OpenAPI spec generation
+    
+    Phase 3 (Weeks 9-12): Advanced Features
+    - Advanced order types (TWAP, iceberg)
+    - Risk management system
+    - Audit logging
+    - Prometheus metrics
+    - Performance optimization
+    
+    Phase 4 (Weeks 13-16): Polish and Documentation
+    - Comprehensive examples
+    - Documentation (architecture, API reference)
+    - Performance benchmarks
+    - Security audit
+    - PyPI release preparation
+    
+    Phase 5 (Weeks 17-18): Testing and Launch
+    - Testnet battle testing
+    - Stress testing (high-frequency scenarios)
+    - Final security review
+    - Public beta release
+    - Community feedback incorporation
+    
+    TOTAL: 18 weeks (4.5 months) for production-ready v1.0
+  </timeline_estimate>
+
+  <risk_mitigation>
+    <technical_risks>
+      - Rust learning curve for maintainers
+        MITIGATION: Comprehensive docs, pair programming, code reviews
+      
+      - PyO3 async bridge complexity
+        MITIGATION: Use pyo3-asyncio crate, extensive testing
+      
+      - Binary size bloat
+        MITIGATION: LTO, strip symbols, optional features
+      
+      - Platform compatibility issues
+        MITIGATION: CI tests on all platforms, pre-built wheels
+    </technical_risks>
+
+    <operational_risks>
+      - Hyperliquid API changes
+        MITIGATION: Version API client, monitor for deprecations
+      
+      - Security vulnerabilities
+        MITIGATION: cargo audit in CI, dependency review, bug bounty
+      
+      - Performance regression
+        MITIGATION: Continuous benchmarking, performance tests in CI
+      
+      - Adoption challenges
+        MITIGATION: Migration guide, backward-compatible mode, examples
+    </operational_risks>
+  </risk_mitigation>
+
+  <future_enhancements>
+    - Multi-exchange support (generalize beyond Hyperliquid)
+    - Strategy backtesting framework
+    - Machine learning integration (feature extraction)
+    - Distributed order execution (load balancing)
+    - WebAssembly compilation for browser trading
+    - Mobile SDKs (iOS/Android via uniffi)
+  </future_enhancements>
+</project_specification>
+

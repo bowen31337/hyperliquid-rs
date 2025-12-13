@@ -1,0 +1,321 @@
+[2025-12-13 03:18:53] Session 1 started - https://api.anthropic.com
+[2025-12-13 03:18:56] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 03:18:56] Session 1 ended - 0 tokens, 1 calls
+[2025-12-13 03:18:56] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 03:19:00] Session 2 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 03:27:27] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 03:27:27] Session 2 ended - 0 tokens, 1 calls
+[2025-12-13 03:27:27] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 03:27:31] Session 3 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 03:36:19] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 03:36:19] Session 3 ended - 0 tokens, 1 calls
+[2025-12-13 03:36:19] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 03:36:23] Session 4 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 03:47:14] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 03:47:14] Session 4 ended - 0 tokens, 1 calls
+[2025-12-13 03:47:14] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 03:47:18] Session 5 started - https://api.minimax.io/anthropic
+[2025-12-13 03:50:35] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 03:50:35] Session 5 ended - 0 tokens, 1 calls
+[2025-12-13 03:50:35] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 03:50:39] Session 6 started - https://api.z.ai/api/anthropic
+[2025-12-13 03:57:03] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 03:57:03] Session 6 ended - 0 tokens, 1 calls
+[2025-12-13 03:57:03] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 03:57:07] Session 7 started - https://api.z.ai/api/anthropic
+[2025-12-13 04:00:20] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:00:20] Session 7 ended - 0 tokens, 1 calls
+[2025-12-13 04:00:20] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:00:24] Session 8 started - https://api.z.ai/api/anthropic
+[2025-12-13 04:06:29] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:06:29] Session 8 ended - 0 tokens, 1 calls
+[2025-12-13 04:06:29] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:06:33] Session 9 started - https://api.z.ai/api/anthropic
+[2025-12-13 04:12:20] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:12:20] Session 9 ended - 0 tokens, 1 calls
+[2025-12-13 04:12:20] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:12:24] Session 10 started - https://api.deepseek.com/anthropic
+[2025-12-13 04:22:20] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:22:20] Session 10 ended - 0 tokens, 1 calls
+[2025-12-13 04:22:20] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:22:24] Session 11 started - https://api.deepseek.com/anthropic
+[2025-12-13 04:33:02] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:33:02] Session 11 ended - 0 tokens, 1 calls
+[2025-12-13 04:33:02] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:33:06] Session 12 started - https://api.deepseek.com/anthropic
+[2025-12-13 04:42:27] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:42:27] Session 12 ended - 0 tokens, 1 calls
+[2025-12-13 04:42:27] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:42:31] Session 13 started - https://api.deepseek.com/anthropic
+[2025-12-13 04:55:26] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 04:55:26] Session 13 ended - 0 tokens, 1 calls
+[2025-12-13 04:55:26] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 04:55:30] Session 14 started - https://api.deepseek.com/anthropic
+[2025-12-13 05:07:28] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 05:07:28] Session 14 ended - 0 tokens, 1 calls
+[2025-12-13 05:07:28] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 05:07:32] Session 15 started - https://api.deepseek.com/anthropic
+[2025-12-13 05:19:08] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 05:19:08] Session 15 ended - 0 tokens, 1 calls
+[2025-12-13 05:19:08] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 05:19:12] Session 16 started - https://api.deepseek.com/anthropic
+[2025-12-13 05:27:07] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 05:27:07] Session 16 ended - 0 tokens, 1 calls
+[2025-12-13 05:27:07] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 05:27:11] Session 17 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 05:33:42] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 05:33:42] Session 17 ended - 0 tokens, 1 calls
+[2025-12-13 05:33:42] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 05:33:46] Session 18 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 05:47:54] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 05:47:54] Session 18 ended - 0 tokens, 1 calls
+[2025-12-13 05:47:54] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 05:47:58] Session 19 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 05:55:02] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 05:55:02] Session 19 ended - 0 tokens, 1 calls
+[2025-12-13 05:55:02] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 05:55:06] Session 20 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 06:18:43] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 06:18:43] Session 20 ended - 0 tokens, 1 calls
+[2025-12-13 06:18:43] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 06:18:47] Session 21 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 06:31:44] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 06:31:44] Session 21 ended - 0 tokens, 1 calls
+[2025-12-13 06:31:44] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 06:31:48] Session 22 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 06:33:58] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 06:33:58] Session 22 ended - 0 tokens, 1 calls
+[2025-12-13 06:33:58] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 06:34:02] Session 23 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 06:44:17] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 06:44:17] Session 23 ended - 0 tokens, 1 calls
+[2025-12-13 06:44:17] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 06:44:21] Session 24 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 06:53:34] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 06:53:34] Session 24 ended - 0 tokens, 1 calls
+[2025-12-13 06:53:34] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 06:53:38] Session 25 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 07:04:05] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 07:04:05] Session 25 ended - 0 tokens, 1 calls
+[2025-12-13 07:04:05] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 07:04:09] Session 26 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 07:20:35] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 07:20:35] Session 26 ended - 0 tokens, 1 calls
+[2025-12-13 07:20:35] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 07:20:39] Session 27 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 07:30:11] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 07:30:11] Session 27 ended - 0 tokens, 1 calls
+[2025-12-13 07:30:11] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 07:30:15] Session 28 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 07:37:54] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 07:37:54] Session 28 ended - 0 tokens, 1 calls
+[2025-12-13 07:37:54] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 07:37:58] Session 29 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 07:47:54] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 07:47:54] Session 29 ended - 0 tokens, 1 calls
+[2025-12-13 07:47:54] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 07:47:58] Session 30 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 07:55:12] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 07:55:12] Session 30 ended - 0 tokens, 1 calls
+[2025-12-13 07:55:12] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 07:55:16] Session 31 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 08:00:39] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 08:00:39] Session 31 ended - 0 tokens, 1 calls
+[2025-12-13 08:00:39] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 08:00:43] Session 32 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 08:19:53] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 08:19:53] Session 32 ended - 0 tokens, 1 calls
+[2025-12-13 08:19:53] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 08:19:57] Session 33 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 08:31:31] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 08:31:31] Session 33 ended - 0 tokens, 1 calls
+[2025-12-13 08:31:31] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 08:31:35] Session 34 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 08:54:36] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 08:54:36] Session 34 ended - 0 tokens, 1 calls
+[2025-12-13 08:54:36] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 08:54:40] Session 35 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:03:59] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:03:59] Session 35 ended - 0 tokens, 1 calls
+[2025-12-13 09:03:59] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:04:03] Session 36 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:12:24] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:12:24] Session 36 ended - 0 tokens, 1 calls
+[2025-12-13 09:12:24] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:12:28] Session 37 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:24:39] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:24:39] Session 37 ended - 0 tokens, 1 calls
+[2025-12-13 09:24:39] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:24:43] Session 38 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:35:30] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:35:30] Session 38 ended - 0 tokens, 1 calls
+[2025-12-13 09:35:30] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:35:34] Session 39 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:41:31] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:41:31] Session 39 ended - 0 tokens, 1 calls
+[2025-12-13 09:41:31] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:41:35] Session 40 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:49:36] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:49:36] Session 40 ended - 0 tokens, 1 calls
+[2025-12-13 09:49:36] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:49:40] Session 41 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 09:55:42] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 09:55:42] Session 41 ended - 0 tokens, 1 calls
+[2025-12-13 09:55:42] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 09:55:46] Session 42 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 10:14:02] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 10:14:02] Session 42 ended - 0 tokens, 1 calls
+[2025-12-13 10:14:02] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 10:14:06] Session 43 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 10:24:04] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 10:24:04] Session 43 ended - 0 tokens, 1 calls
+[2025-12-13 10:24:04] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 10:24:08] Session 44 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 10:32:10] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 10:32:10] Session 44 ended - 0 tokens, 1 calls
+[2025-12-13 10:32:10] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 10:32:14] Session 45 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 10:38:23] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 10:38:23] Session 45 ended - 0 tokens, 1 calls
+[2025-12-13 10:38:23] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 10:38:27] Session 46 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 10:45:35] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 10:45:35] Session 46 ended - 0 tokens, 1 calls
+[2025-12-13 10:45:35] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 10:45:39] Session 47 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 10:53:09] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 10:53:09] Session 47 ended - 0 tokens, 1 calls
+[2025-12-13 10:53:09] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 10:53:13] Session 48 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:04:03] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:04:03] Session 48 ended - 0 tokens, 1 calls
+[2025-12-13 11:04:03] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:04:07] Session 49 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:11:06] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:11:06] Session 49 ended - 0 tokens, 1 calls
+[2025-12-13 11:11:06] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:11:10] Session 50 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:16:43] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:16:43] Session 50 ended - 0 tokens, 1 calls
+[2025-12-13 11:16:43] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:16:47] Session 51 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:23:54] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:23:54] Session 51 ended - 0 tokens, 1 calls
+[2025-12-13 11:23:54] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:23:58] Session 52 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:29:45] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:29:45] Session 52 ended - 0 tokens, 1 calls
+[2025-12-13 11:29:45] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:29:49] Session 53 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:50:26] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:50:26] Session 53 ended - 0 tokens, 1 calls
+[2025-12-13 11:50:26] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:50:30] Session 54 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 11:59:03] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 11:59:03] Session 54 ended - 0 tokens, 1 calls
+[2025-12-13 11:59:03] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 11:59:07] Session 55 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 12:08:40] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 12:08:40] Session 55 ended - 0 tokens, 1 calls
+[2025-12-13 12:08:40] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 12:08:44] Session 56 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 12:17:23] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 12:17:23] Session 56 ended - 0 tokens, 1 calls
+[2025-12-13 12:17:23] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 12:17:27] Session 57 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 12:27:51] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 12:27:51] Session 57 ended - 0 tokens, 1 calls
+[2025-12-13 12:27:51] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 12:27:55] Session 58 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 12:35:00] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 12:35:00] Session 58 ended - 0 tokens, 1 calls
+[2025-12-13 12:35:00] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 12:35:04] Session 59 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 12:48:07] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 12:48:07] Session 59 ended - 0 tokens, 1 calls
+[2025-12-13 12:48:07] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 12:48:11] Session 60 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 12:56:04] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 12:56:04] Session 60 ended - 0 tokens, 1 calls
+[2025-12-13 12:56:04] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 12:56:08] Session 61 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:14:44] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:14:44] Session 61 ended - 0 tokens, 1 calls
+[2025-12-13 13:14:44] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:14:48] Session 62 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:20:05] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:20:05] Session 62 ended - 0 tokens, 1 calls
+[2025-12-13 13:20:05] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:20:09] Session 63 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:24:59] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:24:59] Session 63 ended - 0 tokens, 1 calls
+[2025-12-13 13:24:59] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:25:03] Session 64 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:29:17] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:29:17] Session 64 ended - 0 tokens, 1 calls
+[2025-12-13 13:29:17] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:29:21] Session 65 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:35:28] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:35:28] Session 65 ended - 0 tokens, 1 calls
+[2025-12-13 13:35:28] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:35:32] Session 66 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:39:50] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:39:50] Session 66 ended - 0 tokens, 1 calls
+[2025-12-13 13:39:50] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:39:54] Session 67 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:46:32] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:46:32] Session 67 ended - 0 tokens, 1 calls
+[2025-12-13 13:46:32] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:46:36] Session 68 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:53:42] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:53:42] Session 68 ended - 0 tokens, 1 calls
+[2025-12-13 13:53:42] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:53:46] Session 69 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 13:57:35] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 13:57:35] Session 69 ended - 0 tokens, 1 calls
+[2025-12-13 13:57:35] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 13:57:39] Session 70 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 14:08:12] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 14:08:12] Session 70 ended - 0 tokens, 1 calls
+[2025-12-13 14:08:12] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 14:08:16] Session 71 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 14:12:00] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 14:12:00] Session 71 ended - 0 tokens, 1 calls
+[2025-12-13 14:12:00] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 14:12:04] Session 72 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 14:19:23] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 14:19:23] Session 72 ended - 0 tokens, 1 calls
+[2025-12-13 14:19:23] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 14:19:27] Session 73 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 15:28:18] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:28:18] Session 73 ended - 0 tokens, 1 calls
+[2025-12-13 15:28:18] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:28:22] Session 74 started - https://vanchin.streamlake.ai/api/gateway/v1/endpoints/ep-fti2r8-1764583729284568237/claude-code-proxy
+[2025-12-13 15:32:35] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:32:35] Session 74 ended - 0 tokens, 1 calls
+[2025-12-13 15:32:35] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:32:39] Session 75 started - https://api.z.ai/api/anthropic
+[2025-12-13 15:33:57] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:33:58] Session 75 ended - 0 tokens, 1 calls
+[2025-12-13 15:33:58] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:34:02] Session 76 started - https://api.z.ai/api/anthropic
+[2025-12-13 15:36:01] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:36:01] Session 76 ended - 0 tokens, 1 calls
+[2025-12-13 15:36:01] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:36:05] Session 77 started - https://api.z.ai/api/anthropic
+[2025-12-13 15:40:23] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:40:23] Session 77 ended - 0 tokens, 1 calls
+[2025-12-13 15:40:23] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:40:27] Session 78 started - https://api.z.ai/api/anthropic
+[2025-12-13 15:49:13] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:49:13] Session 78 ended - 0 tokens, 1 calls
+[2025-12-13 15:49:13] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:49:17] Session 79 started - https://api.z.ai/api/anthropic
+[2025-12-13 15:50:36] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 15:50:36] Session 79 ended - 0 tokens, 1 calls
+[2025-12-13 15:50:36] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 15:50:40] Session 80 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:01:30] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:01:30] Session 80 ended - 0 tokens, 1 calls
+[2025-12-13 16:01:30] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:01:34] Session 81 started - https://api.z.ai/api/anthropic

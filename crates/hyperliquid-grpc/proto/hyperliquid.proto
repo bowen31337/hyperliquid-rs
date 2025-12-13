@@ -1,0 +1,278 @@
+syntax = "proto3";
+
+package hyperliquid;
+
+option go_package = "github.com/hyperliquid-dex/hyperliquid-rs/proto";
+option java_multiple_files = true;
+option java_package = "com.hyperliquid.proto";
+
+// Hyperliquid gRPC service for market data and trading
+service HyperliquidService {
+  // Info API endpoints
+  rpc GetMeta(MetaRequest) returns (MetaResponse);
+  rpc GetUserState(UserStateRequest) returns (UserStateResponse);
+  rpc GetAllMids(AllMidsRequest) returns (AllMidsResponse);
+  rpc GetL2Book(L2BookRequest) returns (L2BookResponse);
+  rpc GetTrades(TradesRequest) returns (TradesResponse);
+  rpc GetCandles(CandlesRequest) returns (CandlesResponse);
+  rpc QueryOrder(QueryOrderRequest) returns (QueryOrderResponse);
+
+  // Exchange API endpoints
+  rpc PlaceOrder(PlaceOrderRequest) returns (PlaceOrderResponse);
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  rpc ModifyOrder(ModifyOrderRequest) returns (ModifyOrderResponse);
+  rpc GetOpenOrders(OpenOrdersRequest) returns (OpenOrdersResponse);
+
+  // Streaming endpoints
+  rpc SubscribeToStreams(StreamsSubscriptionRequest) returns (stream StreamResponse);
+}
+
+// Common types
+message Address {
+  string address = 1;
+}
+
+message Timestamp {
+  int64 milliseconds = 1;
+}
+
+// Info API messages
+message MetaRequest {
+  string dex = 1;
+}
+
+message MetaResponse {
+  repeated AssetMeta assets = 1;
+  ExchangeMeta exchange = 2;
+}
+
+message AssetMeta {
+  string name = 1;
+  string onlyIsolated = 2;
+  string szDecimals = 3;
+  string sziDecimals = 4;
+  string pxDecimals = 5;
+  string lotSzPxDecimals = 6;
+  string type = 7;
+}
+
+message ExchangeMeta {
+  string chainId = 1;
+  string exchangeAddress = 2;
+  string chainType = 3;
+  string vaultAddrs = 4;
+}
+
+message UserStateRequest {
+  string address = 1;
+  string dex = 2;
+}
+
+message UserStateResponse {
+  UserState user_state = 1;
+}
+
+message UserState {
+  string address = 1;
+  repeated AssetPosition positions = 2;
+  MarginSummary margin_summary = 3;
+}
+
+message AssetPosition {
+  string coin = 1;
+  string szi = 2;
+  string entryPx = 3;
+  string leverage = 4;
+  string liquidationPx = 5;
+  string breakEvenPx = 6;
+  string positionValue = 7;
+}
+
+message MarginSummary {
+  string accountValue = 1;
+  string totalMarginUsed = 2;
+  string totalNtlPos = 3;
+  string totalRawUsd = 4;
+}
+
+message AllMidsRequest {}
+
+message AllMidsResponse {
+  map<string, string> mids = 1;
+}
+
+message L2BookRequest {
+  string coin = 1;
+  int32 levels = 2;
+}
+
+message L2BookResponse {
+  string coin = 1;
+  repeated OrderLevel levels = 2;
+}
+
+message OrderLevel {
+  string price = 1;
+  string size = 2;
+}
+
+message TradesRequest {
+  string coin = 1;
+  int32 count = 2;
+}
+
+message TradesResponse {
+  repeated Trade trades = 1;
+}
+
+message Trade {
+  string coin = 1;
+  string side = 2;
+  string px = 3;
+  string sz = 4;
+  int64 time = 5;
+  bool hash = 6;
+}
+
+message CandlesRequest {
+  string coin = 1;
+  string interval = 2;
+  int64 startTime = 3;
+  int64 endTime = 4;
+}
+
+message CandlesResponse {
+  repeated Candle candles = 1;
+}
+
+message Candle {
+  int64 start = 1;
+  string txHash = 2;
+  string px = 3;
+  string interval = 4;
+  string coin = 5;
+  string vol = 6;
+  string open = 7;
+  string high = 8;
+  string low = 9;
+  string close = 10;
+}
+
+message QueryOrderRequest {
+  string address = 1;
+  string oid = 2;
+}
+
+message QueryOrderResponse {
+  bool found = 1;
+  OrderDetails order = 2;
+}
+
+message OrderDetails {
+  string coin = 1;
+  bool is_buy = 2;
+  string sz = 3;
+  string limit_px = 4;
+  string oid = 5;
+  string status = 6;
+}
+
+// Exchange API messages
+message PlaceOrderRequest {
+  string address = 1;
+  string signature = 2;
+  OrderRequest order = 3;
+}
+
+message PlaceOrderResponse {
+  bool success = 1;
+  string order_id = 2;
+  string message = 3;
+}
+
+message CancelOrderRequest {
+  string address = 1;
+  string signature = 2;
+  string order_id = 3;
+}
+
+message CancelOrderResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ModifyOrderRequest {
+  string address = 1;
+  string signature = 2;
+  string order_id = 3;
+  OrderRequest new_order = 4;
+}
+
+message ModifyOrderResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message OpenOrdersRequest {
+  string address = 1;
+  string signature = 2;
+}
+
+message OpenOrdersResponse {
+  repeated OrderDetails orders = 1;
+}
+
+message OrderRequest {
+  string coin = 1;
+  bool is_buy = 2;
+  string sz = 3;
+  string limit_px = 4;
+  string order_type = 5;
+  string time_in_force = 6;
+}
+
+// Streaming messages
+message StreamsSubscriptionRequest {
+  repeated StreamSubscription subscriptions = 1;
+}
+
+message StreamSubscription {
+  string type = 1; // "trades", "l2_book", "candles", etc.
+  repeated string coins = 2;
+  map<string, string> options = 3;
+}
+
+message StreamResponse {
+  oneof response {
+    TradeUpdate trade_update = 1;
+    L2BookUpdate l2_book_update = 2;
+    CandleUpdate candle_update = 3;
+    OrderUpdate order_update = 4;
+    Error error = 5;
+  }
+}
+
+message TradeUpdate {
+  string coin = 1;
+  Trade trade = 2;
+}
+
+message L2BookUpdate {
+  string coin = 1;
+  L2BookResponse book = 2;
+}
+
+message CandleUpdate {
+  string coin = 1;
+  Candle candle = 2;
+}
+
+message OrderUpdate {
+  string address = 1;
+  OrderDetails order = 2;
+}
+
+message Error {
+  string code = 1;
+  string message = 2;
+}

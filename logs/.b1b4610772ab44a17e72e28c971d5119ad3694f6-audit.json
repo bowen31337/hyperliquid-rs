@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/logs/.b1b4610772ab44a17e72e28c971d5119ad3694f6-audit.json",
+    "files": [
+        {
+            "date": 1765595935196,
+            "name": "/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/logs/mcp-puppeteer-2025-12-13.log",
+            "hash": "a6b5332f64270b3ec90340c4db42f95a0b51a10cdd291ac612a41781c9c8daab"
+        },
+        {
+            "date": 1765631684440,
+            "name": "/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/logs/mcp-puppeteer-2025-12-14.log",
+            "hash": "5ed3e00189e291d245f78ad7e9464689b6277e46d63b8d0ba8cc3b7e957c3a59"
+        }
+    ],
+    "hashType": "sha256"
+}

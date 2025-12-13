@@ -1,0 +1,10 @@
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/autocfg-cb33cbb7902d02f1.d: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs
+
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/libautocfg-cb33cbb7902d02f1.rlib: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs
+
+/media/bowen/DATA/projects/ecommerce/hyperliquid-rs/target/release/deps/libautocfg-cb33cbb7902d02f1.rmeta: /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs /home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs
+
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/lib.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/error.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/rustc.rs:
+/home/bowen/.cache/puccinialin/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.0/src/version.rs:

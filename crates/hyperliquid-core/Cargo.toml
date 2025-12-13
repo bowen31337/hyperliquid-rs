@@ -1,0 +1,77 @@
+[package]
+name = "hyperliquid-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "Core Rust implementation of Hyperliquid SDK"
+license = "MIT"
+authors = ["Hyperliquid Team"]
+repository = "https://github.com/hyperliquid-dex/hyperliquid-rs"
+
+[dependencies]
+# Async runtime (inherited from workspace)
+tokio = { workspace = true }
+futures = { workspace = true }
+
+# HTTP client
+reqwest = { version = "0.12.3", features = ["json", "rustls-tls", "http2", "blocking"] }
+hyper = { version = "1.1", features = ["full", "client", "http2"] }
+
+# TLS for certificate pinning
+rustls = "0.23"
+webpki-roots = "0.26"
+x509-parser = "0.16"
+
+# WebSocket
+tokio-tungstenite = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Decimal precision
+rust_decimal = { version = "1.35.0", features = ["serde-float"] }
+rust_decimal_macros = "1.35.0"
+
+# Cryptography
+ring = { workspace = true }
+ed25519-dalek = { workspace = true }
+sha3 = { workspace = true }
+keccak-hash = { workspace = true }
+rand = { workspace = true }
+rmp-serde = { workspace = true }
+secp256k1 = { workspace = true }
+k256 = { workspace = true }
+hex = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-appender = { workspace = true }
+uuid = { workspace = true }
+
+# Time handling
+chrono = { workspace = true }
+
+# Configuration
+config = { workspace = true }
+
+# Metrics
+metrics = { workspace = true }
+
+[dev-dependencies]
+# Testing
+proptest = { workspace = true }
+criterion = { workspace = true }
+mockito = { workspace = true }
+
+[lib]
+name = "hyperliquid_core"
+crate-type = ["lib"]
+
+[[bench]]
+name = "memory_benchmarks"
+harness = false
