@@ -839,7 +839,7 @@
       "Verify dex-specific response",
       "Check asset list differs"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 63,
@@ -865,7 +865,7 @@
       "Verify funding rates",
       "Check mark prices"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 65,
@@ -928,7 +928,7 @@
       "Verify OHLCV fields",
       "Check timestamp ordering"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 70,
@@ -941,7 +941,7 @@
       "Verify rate format",
       "Check premium values"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 71,
