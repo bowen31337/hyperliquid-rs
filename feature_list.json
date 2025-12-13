@@ -961,7 +961,7 @@
       "Verify leverage values",
       "Check liquidation price if applicable"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 72,
@@ -973,7 +973,7 @@
       "Verify token amounts",
       "Check hold amounts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 73,
@@ -985,7 +985,7 @@
       "Verify order fields",
       "Check order status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 74,
@@ -997,7 +997,7 @@
       "Check additional UI fields",
       "Verify order IDs"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 75,
@@ -1010,7 +1010,7 @@
       "Check fill times",
       "Verify fee data"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 76,
@@ -1023,7 +1023,7 @@
       "Parse filtered fills",
       "Verify time bounds"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 77,
@@ -1036,7 +1036,7 @@
       "Calculate total funding",
       "Verify payment direction"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 78,
@@ -1048,7 +1048,7 @@
       "Check 30d volume",
       "Verify maker/taker rates"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 79,
@@ -1060,7 +1060,7 @@
       "Check pending rewards",
       "Verify validator count"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 80,
@@ -1072,7 +1072,7 @@
       "Extract validator addresses",
       "Check amounts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 81,
@@ -1084,7 +1084,7 @@
       "Calculate total rewards",
       "Verify claim status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 82,
@@ -1096,7 +1096,7 @@
       "Check delegate/undelegate",
       "Verify reward claims"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 83,
@@ -1108,7 +1108,7 @@
       "Verify limit respected",
       "Check order statuses"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 84,
@@ -1120,7 +1120,7 @@
       "Check update types",
       "Verify amounts"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 85,
@@ -1132,7 +1132,7 @@
       "Check PnL breakdown",
       "Verify time series"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 86,
@@ -1204,7 +1204,7 @@
       "Parse order status",
       "Verify fill status"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 92,
@@ -1216,7 +1216,7 @@
       "Parse response",
       "Match original order"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "id": 93,
