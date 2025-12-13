@@ -1,0 +1,2761 @@
+[
+  {
+    "id": 1,
+    "category": "rust-core",
+    "description": "HTTP client initialization with connection pooling",
+    "steps": [
+      "Create HttpClient with default config",
+      "Verify connection pool is initialized",
+      "Check pool size matches configuration",
+      "Verify TLS 1.3 is enabled",
+      "Test HTTP/2 multiplexing enabled",
+      "Check certificate chain validation",
+      "Verify keepalive settings",
+      "Test connection timeout defaults",
+      "Verify User-Agent header set",
+      "Check compression enabled",
+      "Test proxy configuration if set"
+    ],
+    "passes": true
+  },
+  {
+    "id": 2,
+    "category": "rust-core",
+    "description": "HTTP client connection reuse across requests",
+    "steps": [
+      "Create HttpClient",
+      "Make 10 sequential requests",
+      "Verify connections are reused via metrics",
+      "Check no connection leaks",
+      "Verify pool cleanup on drop"
+    ],
+    "passes": true
+  },
+  {
+    "id": 3,
+    "category": "rust-core",
+    "description": "HTTP client concurrent request handling",
+    "steps": [
+      "Create HttpClient",
+      "Spawn 50 concurrent requests to /info meta endpoint",
+      "Verify all 50 complete successfully",
+      "Check connection pool under load shows reuse",
+      "Measure latency distribution P50/P95/P99",
+      "Verify no 5xx errors",
+      "Check memory usage during burst",
+      "Verify graceful handling of slow responses",
+      "Test backpressure mechanism",
+      "Check all responses parsed correctly",
+      "Verify cleanup after completion"
+    ],
+    "passes": true
+  },
+  {
+    "id": 4,
+    "category": "rust-core",
+    "description": "HTTP client timeout configuration",
+    "steps": [
+      "Configure connect timeout 5s",
+      "Configure read timeout 30s",
+      "Test timeout triggers correctly",
+      "Verify proper error type returned"
+    ],
+    "passes": true
+  },
+  {
+    "id": 5,
+    "category": "rust-core",
+    "description": "HTTP client retry logic with exponential backoff",
+    "steps": [
+      "Configure retry policy max_retries=3 backoff_base=100ms",
+      "Send request that returns 503 first time",
+      "Verify first retry attempt after ~100ms",
+      "Verify second retry after ~200ms with jitter",
+      "Verify third retry after ~400ms with jitter",
+      "Check max retries respected at 3",
+      "Verify final failure returns RetryExhaustedError",
+      "Test 429 triggers retry with Retry-After header",
+      "Test 500 triggers retry",
+      "Test 502/504 triggers retry",
+      "Verify 4xx errors NOT retried"
+    ],
+    "passes": true
+  },
+  {
+    "id": 6,
+    "category": "rust-core",
+    "description": "HTTP client certificate pinning for Hyperliquid API",
+    "steps": [
+      "Load pinned certificate",
+      "Connect to mainnet API",
+      "Verify connection succeeds",
+      "Test with invalid cert fails",
+      "Verify error message is clear"
+    ],
+    "passes": true
+  },
+  {
+    "id": 7,
+    "category": "rust-core",
+    "description": "HTTP client mainnet endpoint connectivity",
+    "steps": [
+      "Create client for mainnet",
+      "Send test request to /info",
+      "Verify 200 response",
+      "Parse JSON response"
+    ],
+    "passes": true
+  },
+  {
+    "id": 8,
+    "category": "rust-core",
+    "description": "HTTP client testnet endpoint connectivity",
+    "steps": [
+      "Create client for testnet",
+      "Send test request to /info",
+      "Verify 200 response",
+      "Parse JSON response"
+    ],
+    "passes": true
+  },
+  {
+    "id": 9,
+    "category": "rust-core",
+    "description": "HTTP client rate limiting handling",
+    "steps": [
+      "Trigger 429 response",
+      "Verify RateLimitError is returned",
+      "Check retry-after header parsing",
+      "Test automatic backoff"
+    ],
+    "passes": true
+  },
+  {
+    "id": 10,
+    "category": "rust-core",
+    "description": "WebSocket client initialization",
+    "steps": [
+      "Create WebSocket client",
+      "Connect to ws://api.hyperliquid.xyz/ws",
+      "Verify connection established",
+      "Check heartbeat starts"
+    ],
+    "passes": true
+  },
+  {
+    "id": 11,
+    "category": "rust-core",
+    "description": "WebSocket client automatic reconnection",
+    "steps": [
+      "Establish WebSocket connection successfully",
+      "Subscribe to allMids channel",
+      "Receive initial data",
+      "Simulate network disconnect via mock",
+      "Verify client detects disconnect within 30s",
+      "Verify reconnection attempt starts",
+      "Check first backoff delay ~1s",
+      "Check second backoff ~2s",
+      "Check third backoff ~4s with jitter",
+      "Verify max backoff capped at 30s",
+      "Verify subscription automatically restored",
+      "Confirm data flow resumes"
+    ],
+    "passes": true
+  },
+  {
+    "id": 12,
+    "category": "rust-core",
+    "description": "WebSocket ping/pong keepalive",
+    "steps": [
+      "Connect to WebSocket",
+      "Wait 30 seconds",
+      "Verify ping sent",
+      "Verify pong received",
+      "Check connection stays alive"
+    ],
+    "passes": true
+  },
+  {
+    "id": 13,
+    "category": "rust-core",
+    "description": "WebSocket message parsing and routing",
+    "steps": [
+      "Subscribe to channel",
+      "Receive message",
+      "Parse JSON correctly",
+      "Route to correct handler",
+      "Verify message type detection"
+    ],
+    "passes": true
+  },
+  {
+    "id": 14,
+    "category": "rust-core",
+    "description": "WebSocket circular buffer for burst handling",
+    "steps": [
+      "Configure circular buffer size 1000 messages",
+      "Connect to WebSocket and subscribe to l2Book",
+      "Send 5000 messages rapidly via mock server",
+      "Verify all 5000 messages received by buffer",
+      "Check buffer head/tail pointers wrap correctly",
+      "Verify oldest messages evicted when full",
+      "Measure message processing latency in Rust layer",
+      "Check no memory allocation during steady state",
+      "Verify consumer can read at slower rate",
+      "Test buffer stats reporting",
+      "Check cleanup on disconnect"
+    ],
+    "passes": true
+  },
+  {
+    "id": 15,
+    "category": "rust-core",
+    "description": "Error type hierarchy implementation",
+    "steps": [
+      "Create NetworkError",
+      "Create AuthenticationError",
+      "Create ValidationError",
+      "Create RateLimitError",
+      "Create APIError",
+      "Verify error chain works",
+      "Test error display formatting"
+    ],
+    "passes": true
+  },
+  {
+    "id": 16,
+    "category": "rust-core",
+    "description": "Tokio async runtime configuration",
+    "steps": [
+      "Initialize multi-threaded runtime",
+      "Configure worker threads",
+      "Configure blocking pool",
+      "Verify runtime starts",
+      "Test graceful shutdown"
+    ],
+    "passes": true
+  },
+  {
+    "id": 17,
+    "category": "rust-core",
+    "description": "Tracing and structured logging setup",
+    "steps": [
+      "Initialize tracing subscriber",
+      "Set log level to debug",
+      "Generate trace ID",
+      "Log request/response",
+      "Verify JSON log format"
+    ],
+    "passes": true
+  },
+  {
+    "id": 18,
+    "category": "rust-core",
+    "description": "Configuration loading from TOML",
+    "steps": [
+      "Create config file",
+      "Load default.toml",
+      "Override with environment vars",
+      "Validate configuration",
+      "Test missing required field error"
+    ],
+    "passes": true
+  },
+  {
+    "id": 19,
+    "category": "rust-core",
+    "description": "Graceful shutdown handling",
+    "steps": [
+      "Start client with active connections",
+      "Send shutdown signal",
+      "Verify pending requests complete",
+      "Check WebSocket closes cleanly",
+      "Verify no resource leaks"
+    ],
+    "passes": true
+  },
+  {
+    "id": 20,
+    "category": "rust-core",
+    "description": "Memory allocation optimization",
+    "steps": [
+      "Profile memory usage",
+      "Verify arena allocator for requests",
+      "Check string interning for symbols",
+      "Measure peak memory under load",
+      "Verify <100MB for typical workload"
+    ],
+    "passes": true
+  },
+  {
+    "id": 21,
+    "category": "types",
+    "description": "Meta struct serialization/deserialization",
+    "steps": [
+      "Create Meta from JSON",
+      "Verify all fields parsed",
+      "Serialize back to JSON",
+      "Compare roundtrip equality"
+    ],
+    "passes": true
+  },
+  {
+    "id": 22,
+    "category": "types",
+    "description": "SpotMeta struct with asset contexts",
+    "steps": [
+      "Parse SpotMeta response",
+      "Extract SpotAssetInfo",
+      "Verify token info fields",
+      "Test spot_meta_and_asset_ctxs"
+    ],
+    "passes": true
+  },
+  {
+    "id": 23,
+    "category": "types",
+    "description": "UserState position parsing",
+    "steps": [
+      "Parse clearinghouseState",
+      "Extract Position objects",
+      "Verify margin summary",
+      "Check collateral values"
+    ],
+    "passes": true
+  },
+  {
+    "id": 24,
+    "category": "types",
+    "description": "Order type variants (Limit, Trigger)",
+    "steps": [
+      "Create Limit GTC order",
+      "Create Limit IOC order",
+      "Create Limit ALO order",
+      "Create TP trigger order",
+      "Create SL trigger order",
+      "Serialize each variant"
+    ],
+    "passes": true
+  },
+  {
+    "id": 25,
+    "category": "types",
+    "description": "OrderWire serialization for API",
+    "steps": [
+      "Build OrderWire from Order",
+      "Serialize to wire format",
+      "Verify field names match API",
+      "Test asset index lookup"
+    ],
+    "passes": true
+  },
+  {
+    "id": 26,
+    "category": "types",
+    "description": "Cloid (Client Order ID) implementation",
+    "steps": [
+      "Generate new Cloid",
+      "Parse Cloid from hex string",
+      "Verify 16-byte length",
+      "Test string representation",
+      "Check equality comparison"
+    ],
+    "passes": true
+  },
+  {
+    "id": 27,
+    "category": "types",
+    "description": "BuilderInfo struct for builder fees",
+    "steps": [
+      "Create BuilderInfo",
+      "Set builder address",
+      "Set fee in tenths of bps",
+      "Serialize correctly",
+      "Validate fee range"
+    ],
+    "passes": true
+  },
+  {
+    "id": 28,
+    "category": "types",
+    "description": "L2Book orderbook parsing",
+    "steps": [
+      "Parse l2Book response",
+      "Extract bid levels",
+      "Extract ask levels",
+      "Verify price/size parsing",
+      "Check level ordering"
+    ],
+    "passes": true
+  },
+  {
+    "id": 29,
+    "category": "types",
+    "description": "Candle OHLCV data parsing",
+    "steps": [
+      "Parse candleSnapshot",
+      "Verify open/high/low/close",
+      "Check volume field",
+      "Parse timestamp",
+      "Test interval enum"
+    ],
+    "passes": true
+  },
+  {
+    "id": 30,
+    "category": "types",
+    "description": "Fill trade record parsing",
+    "steps": [
+      "Parse userFills response",
+      "Extract fill price/size",
+      "Check side (Buy/Sell)",
+      "Parse timestamp",
+      "Extract fee information"
+    ],
+    "passes": true
+  },
+  {
+    "id": 31,
+    "category": "types",
+    "description": "WebSocket message type union (WsMsg)",
+    "steps": [
+      "Parse AllMidsMsg",
+      "Parse L2BookMsg",
+      "Parse TradesMsg",
+      "Parse UserEventsMsg",
+      "Parse PongMsg",
+      "Test unknown message handling"
+    ],
+    "passes": true
+  },
+  {
+    "id": 32,
+    "category": "types",
+    "description": "Subscription type variants",
+    "steps": [
+      "Create allMids subscription",
+      "Create l2Book subscription",
+      "Create trades subscription",
+      "Create userEvents subscription",
+      "Create orderUpdates subscription",
+      "Serialize each variant"
+    ],
+    "passes": true
+  },
+  {
+    "id": 33,
+    "category": "types",
+    "description": "Price and quantity precision handling",
+    "steps": [
+      "Parse decimal prices",
+      "Handle 8 decimal places",
+      "Convert to wire format",
+      "Verify no precision loss",
+      "Test edge cases (0, max)"
+    ],
+    "passes": true
+  },
+  {
+    "id": 34,
+    "category": "types",
+    "description": "Address validation (0x format)",
+    "steps": [
+      "Validate valid address",
+      "Reject invalid prefix",
+      "Reject wrong length",
+      "Reject non-hex chars",
+      "Parse to Address type"
+    ],
+    "passes": true
+  },
+  {
+    "id": 35,
+    "category": "types",
+    "description": "Timestamp handling (Unix millis)",
+    "steps": [
+      "Parse timestamp from API",
+      "Convert to DateTime",
+      "Serialize back to millis",
+      "Handle timezone correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 36,
+    "category": "types",
+    "description": "PerpDexSchemaInput for perpetual deployment",
+    "steps": [
+      "Create schema input",
+      "Set fullName",
+      "Set collateralToken",
+      "Set oracleUpdater",
+      "Serialize correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 37,
+    "category": "types",
+    "description": "MarginSummary calculations",
+    "steps": [
+      "Parse margin summary",
+      "Verify account value",
+      "Check total margin used",
+      "Calculate withdrawable",
+      "Verify maintenance margin"
+    ],
+    "passes": true
+  },
+  {
+    "id": 38,
+    "category": "types",
+    "description": "Serde skip_serializing_if for optional fields",
+    "steps": [
+      "Create struct with None fields",
+      "Serialize to JSON",
+      "Verify None fields omitted",
+      "Parse back successfully"
+    ],
+    "passes": true
+  },
+  {
+    "id": 39,
+    "category": "types",
+    "description": "Enum rename for API compatibility",
+    "steps": [
+      "Define OrderType enum",
+      "Apply serde rename",
+      "Serialize GoodTillCancel as Gtc",
+      "Parse API response correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 40,
+    "category": "types",
+    "description": "Generic response wrapper parsing",
+    "steps": [
+      "Parse success response",
+      "Parse error response",
+      "Extract status field",
+      "Handle nested data field"
+    ],
+    "passes": true
+  },
+  {
+    "id": 41,
+    "category": "crypto",
+    "description": "EIP-712 domain separator construction",
+    "steps": [
+      "Build domain for mainnet",
+      "Set chain ID 0x66eee",
+      "Set name 'HyperliquidSignTransaction'",
+      "Hash domain correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 42,
+    "category": "crypto",
+    "description": "Action hash using msgpack + keccak",
+    "steps": [
+      "Create order action with symbol BTC, is_buy fal, size 0.1, price 50000",
+      "Serialize action dict with msgpack encoding",
+      "Verify msgpack output matches expected bytes",
+      "Append nonce as 8 bytes big-endian",
+      "Append vault flag 0x00 for no vault",
+      "Concatenate all bytes",
+      "Apply keccak256 hash function",
+      "Verify output is 32 bytes",
+      "Compare hash to known test vector",
+      "Use hash in phantom agent construction"
+    ],
+    "passes": true
+  },
+  {
+    "id": 43,
+    "category": "crypto",
+    "description": "Phantom agent construction for L1 signing",
+    "steps": [
+      "Take action hash",
+      "Construct phantom agent struct",
+      "Set source as 'a'",
+      "Set connectionId correctly",
+      "Serialize for signing"
+    ],
+    "passes": true
+  },
+  {
+    "id": 44,
+    "category": "crypto",
+    "description": "L1 action signing with private key",
+    "steps": [
+      "Create L1 action payload for order placement",
+      "Generate nonce from current timestamp",
+      "Set vault_address to None",
+      "Compute action hash via msgpack + keccak",
+      "Construct phantom agent with hash and source",
+      "Build EIP-712 typed data structure",
+      "Sign with secp256k1 private key",
+      "Extract r (32 bytes) from signature",
+      "Extract s (32 bytes) from signature",
+      "Compute v (recovery id) as 27 or 28",
+      "Format signature as {r, s, v} object",
+      "Verify signature roundtrips correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 45,
+    "category": "crypto",
+    "description": "User-signed action signing flow",
+    "steps": [
+      "Set signatureChainId",
+      "Construct typed data",
+      "Build type hash",
+      "Sign with wallet key",
+      "Format signature correctly"
+    ],
+    "passes": true
+  },
+  {
+    "id": 46,
+    "category": "crypto",
+    "description": "USD_SEND signature type handling",
+    "steps": [
+      "Create usdSend action",
+      "Apply USD_SEND_SIGN_TYPES",
+      "Sign with user key",
+      "Verify signature valid",
+      "Test with testnet chain"
+    ],
+    "passes": true
+  },
+  {
+    "id": 47,
+    "category": "crypto",
+    "description": "SPOT_TRANSFER signature type handling",
+    "steps": [
+      "Create spotSend action",
+      "Apply SPOT_TRANSFER_SIGN_TYPES",
+      "Sign correctly",
+      "Verify chain ID used"
+    ],
+    "passes": true
+  },
+  {
+    "id": 48,
+    "category": "crypto",
+    "description": "WITHDRAW signature type handling",
+    "steps": [
+      "Create withdraw3 action",
+      "Apply WITHDRAW_SIGN_TYPES",
+      "Set destination address",
+      "Sign and verify"
+    ],
+    "passes": true
+  },
+  {
+    "id": 49,
+    "category": "crypto",
+    "description": "Multi-sig envelope signing",
+    "steps": [
+      "Create inner action (e.g., order placement)",
+      "Sign inner action with first authorized signer",
+      "Get signature from second authorized signer",
+      "Construct multi-sig envelope with inner action",
+      "Set multi_sig_user address",
+      "Include all collected signatures array",
+      "Set nonce for envelope",
+      "Set vault_address if applicable",
+      "Apply MULTI_SIG_ENVELOPE_SIGN_TYPES",
+      "Sign complete envelope",
+      "Verify threshold of 2 signatures met",
+      "Submit to exchange endpoint"
+    ],
+    "passes": true
+  },
+  {
+    "id": 50,
+    "category": "crypto",
+    "description": "Address recovery from signature",
+    "steps": [
+      "Sign known message",
+      "Recover signer address",
+      "Verify matches original",
+      "Test with invalid sig"
+    ],
+    "passes": true
+  },
+  {
+    "id": 51,
+    "category": "crypto",
+    "description": "float_to_wire precision conversion",
+    "steps": [
+      "Convert 1234.56789",
+      "Verify string format",
+      "Handle trailing zeros",
+      "Test maximum precision",
+      "Handle zero correctly"
+    ],
+    "passes": false
+  },
+  {
+    "id": 52,
+    "category": "crypto",
+    "description": "Nonce generation and management",
+    "steps": [
+      "Generate timestamp nonce",
+      "Ensure uniqueness",
+      "Handle nonce reuse error",
+      "Test nonce format"
+    ],
+    "passes": false
+  },
+  {
+    "id": 53,
+    "category": "crypto",
+    "description": "Private key secure memory handling",
+    "steps": [
+      "Generate random 32-byte private key",
+      "Allocate secure memory buffer",
+      "Copy key bytes to secure buffer",
+      "Call mlock() on buffer memory region",
+      "Verify mlock() returns success",
+      "Check key bytes not in swap file",
+      "Perform signing operation with key",
+      "Verify signature is correct",
+      "Begin key destruction",
+      "Overwrite buffer with zeros",
+      "Call munlock() on buffer",
+      "Free secure buffer memory",
+      "Verify key bytes not recoverable"
+    ],
+    "passes": false
+  },
+  {
+    "id": 54,
+    "category": "crypto",
+    "description": "Wallet initialization from private key",
+    "steps": [
+      "Create wallet from hex key",
+      "Derive public key",
+      "Derive address",
+      "Verify checksummed address"
+    ],
+    "passes": false
+  },
+  {
+    "id": 55,
+    "category": "crypto",
+    "description": "Agent key generation",
+    "steps": [
+      "Generate new random key",
+      "Derive agent address",
+      "Format for API approval",
+      "Return key securely"
+    ],
+    "passes": false
+  },
+  {
+    "id": 56,
+    "category": "crypto",
+    "description": "Keccak256 hashing implementation",
+    "steps": [
+      "Hash empty input",
+      "Hash known test vector",
+      "Verify output length 32",
+      "Test incremental hashing"
+    ],
+    "passes": false
+  },
+  {
+    "id": 57,
+    "category": "crypto",
+    "description": "Secp256k1 signature verification",
+    "steps": [
+      "Create test signature",
+      "Verify with public key",
+      "Reject tampered message",
+      "Reject wrong key"
+    ],
+    "passes": false
+  },
+  {
+    "id": 58,
+    "category": "crypto",
+    "description": "EIP-712 type hash computation",
+    "steps": [
+      "Define typed struct",
+      "Compute type string",
+      "Hash type string",
+      "Use in struct hash"
+    ],
+    "passes": false
+  },
+  {
+    "id": 59,
+    "category": "crypto",
+    "description": "TOKEN_DELEGATE signature type",
+    "steps": [
+      "Create delegate action",
+      "Set validator address",
+      "Set wei amount",
+      "Sign correctly"
+    ],
+    "passes": false
+  },
+  {
+    "id": 60,
+    "category": "crypto",
+    "description": "CONVERT_TO_MULTI_SIG_USER signing",
+    "steps": [
+      "Create conversion action",
+      "Set authorized users",
+      "Set threshold",
+      "Sign with owner key"
+    ],
+    "passes": false
+  },
+  {
+    "id": 61,
+    "category": "info-api",
+    "description": "meta() endpoint for perpetual metadata",
+    "steps": [
+      "Call meta()",
+      "Parse universe array",
+      "Verify asset names",
+      "Check sz_decimals",
+      "Verify maxLeverage"
+    ],
+    "passes": true
+  },
+  {
+    "id": 62,
+    "category": "info-api",
+    "description": "meta() with specific dex parameter",
+    "steps": [
+      "Call meta(dex='custom')",
+      "Verify dex-specific response",
+      "Check asset list differs"
+    ],
+    "passes": false
+  },
+  {
+    "id": 63,
+    "category": "info-api",
+    "description": "spot_meta() endpoint",
+    "steps": [
+      "Call spot_meta()",
+      "Parse tokens array",
+      "Verify token names",
+      "Check decimals",
+      "Extract token indices"
+    ],
+    "passes": true
+  },
+  {
+    "id": 64,
+    "category": "info-api",
+    "description": "meta_and_asset_ctxs() combined call",
+    "steps": [
+      "Call meta_and_asset_ctxs()",
+      "Extract meta section",
+      "Extract asset contexts",
+      "Verify funding rates",
+      "Check mark prices"
+    ],
+    "passes": false
+  },
+  {
+    "id": 65,
+    "category": "info-api",
+    "description": "spot_meta_and_asset_ctxs() combined call",
+    "steps": [
+      "Call spot_meta_and_asset_ctxs()",
+      "Extract spot meta",
+      "Extract spot contexts",
+      "Verify total supply",
+      "Check circulating supply"
+    ],
+    "passes": true
+  },
+  {
+    "id": 66,
+    "category": "info-api",
+    "description": "perp_dexs() endpoint",
+    "steps": [
+      "Call perp_dexs()",
+      "Parse dex list",
+      "Verify dex names",
+      "Check dex IDs"
+    ],
+    "passes": true
+  },
+  {
+    "id": 67,
+    "category": "info-api",
+    "description": "all_mids() endpoint for mid prices",
+    "steps": [
+      "Call all_mids()",
+      "Parse price map",
+      "Verify all assets present",
+      "Check price format"
+    ],
+    "passes": true
+  },
+  {
+    "id": 68,
+    "category": "info-api",
+    "description": "l2_snapshot() orderbook snapshot",
+    "steps": [
+      "Call l2_snapshot('BTC')",
+      "Parse bid levels",
+      "Parse ask levels",
+      "Verify level count",
+      "Check price ordering"
+    ],
+    "passes": true
+  },
+  {
+    "id": 69,
+    "category": "info-api",
+    "description": "candles_snapshot() OHLCV data",
+    "steps": [
+      "Call candles_snapshot('BTC', '1h')",
+      "Set start/end time",
+      "Parse candle array",
+      "Verify OHLCV fields",
+      "Check timestamp ordering"
+    ],
+    "passes": false
+  },
+  {
+    "id": 70,
+    "category": "info-api",
+    "description": "funding_history() endpoint",
+    "steps": [
+      "Call funding_history('BTC')",
+      "Set time range",
+      "Parse funding rates",
+      "Verify rate format",
+      "Check premium values"
+    ],
+    "passes": false
+  },
+  {
+    "id": 71,
+    "category": "info-api",
+    "description": "user_state() position data",
+    "steps": [
+      "Call user_state(address, dex) with valid user address",
+      "Parse API response JSON",
+      "Extract marginSummary object",
+      "Verify accountValue field present and numeric",
+      "Extract crossMarginSummary if applicable",
+      "Parse assetPositions array",
+      "For each position extract coin name",
+      "For each position extract szi (size)",
+      "For each position extract entryPx",
+      "Calculate unrealized PnL from mark price",
+      "Verify leverage values",
+      "Check liquidation price if applicable"
+    ],
+    "passes": false
+  },
+  {
+    "id": 72,
+    "category": "info-api",
+    "description": "spot_user_state() spot balances",
+    "steps": [
+      "Call spot_user_state(address)",
+      "Parse balances array",
+      "Verify token amounts",
+      "Check hold amounts"
+    ],
+    "passes": false
+  },
+  {
+    "id": 73,
+    "category": "info-api",
+    "description": "open_orders() current orders",
+    "steps": [
+      "Call open_orders(address)",
+      "Parse order array",
+      "Verify order fields",
+      "Check order status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 74,
+    "category": "info-api",
+    "description": "frontend_open_orders() with UI details",
+    "steps": [
+      "Call frontend_open_orders(address)",
+      "Parse enhanced order data",
+      "Check additional UI fields",
+      "Verify order IDs"
+    ],
+    "passes": false
+  },
+  {
+    "id": 75,
+    "category": "info-api",
+    "description": "user_fills() recent fills",
+    "steps": [
+      "Call user_fills(address)",
+      "Parse fill array",
+      "Extract prices and sizes",
+      "Check fill times",
+      "Verify fee data"
+    ],
+    "passes": false
+  },
+  {
+    "id": 76,
+    "category": "info-api",
+    "description": "user_fills_by_time() with time range",
+    "steps": [
+      "Call user_fills_by_time()",
+      "Set start and end time",
+      "Set aggregate flag",
+      "Parse filtered fills",
+      "Verify time bounds"
+    ],
+    "passes": false
+  },
+  {
+    "id": 77,
+    "category": "info-api",
+    "description": "user_funding_history() funding payments",
+    "steps": [
+      "Call user_funding_history()",
+      "Set time range",
+      "Parse funding payments",
+      "Calculate total funding",
+      "Verify payment direction"
+    ],
+    "passes": false
+  },
+  {
+    "id": 78,
+    "category": "info-api",
+    "description": "user_fees() volume and tier info",
+    "steps": [
+      "Call user_fees(address)",
+      "Parse fee tier",
+      "Check 30d volume",
+      "Verify maker/taker rates"
+    ],
+    "passes": false
+  },
+  {
+    "id": 79,
+    "category": "info-api",
+    "description": "user_staking_summary() delegation overview",
+    "steps": [
+      "Call user_staking_summary()",
+      "Parse total delegated",
+      "Check pending rewards",
+      "Verify validator count"
+    ],
+    "passes": false
+  },
+  {
+    "id": 80,
+    "category": "info-api",
+    "description": "user_staking_delegations() delegation list",
+    "steps": [
+      "Call user_staking_delegations()",
+      "Parse delegation array",
+      "Extract validator addresses",
+      "Check amounts"
+    ],
+    "passes": false
+  },
+  {
+    "id": 81,
+    "category": "info-api",
+    "description": "user_staking_rewards() reward data",
+    "steps": [
+      "Call user_staking_rewards()",
+      "Parse reward history",
+      "Calculate total rewards",
+      "Verify claim status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 82,
+    "category": "info-api",
+    "description": "delegator_history() comprehensive history",
+    "steps": [
+      "Call delegator_history()",
+      "Parse all events",
+      "Check delegate/undelegate",
+      "Verify reward claims"
+    ],
+    "passes": false
+  },
+  {
+    "id": 83,
+    "category": "info-api",
+    "description": "historical_orders() up to 2000 orders",
+    "steps": [
+      "Call historical_orders()",
+      "Parse order history",
+      "Verify limit respected",
+      "Check order statuses"
+    ],
+    "passes": false
+  },
+  {
+    "id": 84,
+    "category": "info-api",
+    "description": "user_non_funding_ledger_updates()",
+    "steps": [
+      "Call with time range",
+      "Parse ledger updates",
+      "Check update types",
+      "Verify amounts"
+    ],
+    "passes": false
+  },
+  {
+    "id": 85,
+    "category": "info-api",
+    "description": "portfolio() performance data",
+    "steps": [
+      "Call portfolio(user)",
+      "Parse portfolio value",
+      "Check PnL breakdown",
+      "Verify time series"
+    ],
+    "passes": false
+  },
+  {
+    "id": 86,
+    "category": "info-api",
+    "description": "user_twap_slice_fills() TWAP fills",
+    "steps": [
+      "Call user_twap_slice_fills()",
+      "Parse TWAP executions",
+      "Check slice details",
+      "Verify fill prices"
+    ],
+    "passes": false
+  },
+  {
+    "id": 87,
+    "category": "info-api",
+    "description": "user_vault_equities() vault positions",
+    "steps": [
+      "Call user_vault_equities()",
+      "Parse vault list",
+      "Check equity amounts",
+      "Verify vault addresses"
+    ],
+    "passes": false
+  },
+  {
+    "id": 88,
+    "category": "info-api",
+    "description": "user_role() account type",
+    "steps": [
+      "Call user_role(user)",
+      "Parse role type",
+      "Check permissions",
+      "Verify account status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 89,
+    "category": "info-api",
+    "description": "user_rate_limit() API limits",
+    "steps": [
+      "Call user_rate_limit()",
+      "Parse rate limit info",
+      "Check remaining quota",
+      "Verify reset time"
+    ],
+    "passes": false
+  },
+  {
+    "id": 90,
+    "category": "info-api",
+    "description": "extra_agents() authorized keys",
+    "steps": [
+      "Call extra_agents(user)",
+      "Parse agent list",
+      "Check agent names",
+      "Verify permissions"
+    ],
+    "passes": false
+  },
+  {
+    "id": 91,
+    "category": "info-api",
+    "description": "query_order_by_oid() order status",
+    "steps": [
+      "Create order",
+      "Query by oid",
+      "Parse order status",
+      "Verify fill status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 92,
+    "category": "info-api",
+    "description": "query_order_by_cloid() using client ID",
+    "steps": [
+      "Create order with cloid",
+      "Query by cloid",
+      "Parse response",
+      "Match original order"
+    ],
+    "passes": false
+  },
+  {
+    "id": 93,
+    "category": "info-api",
+    "description": "query_referral_state() referral info",
+    "steps": [
+      "Call query_referral_state()",
+      "Parse referral code",
+      "Check referral stats",
+      "Verify rewards"
+    ],
+    "passes": false
+  },
+  {
+    "id": 94,
+    "category": "info-api",
+    "description": "query_sub_accounts() sub-account list",
+    "steps": [
+      "Call query_sub_accounts()",
+      "Parse sub-account array",
+      "Check sub-account names",
+      "Verify balances"
+    ],
+    "passes": false
+  },
+  {
+    "id": 95,
+    "category": "info-api",
+    "description": "query_user_to_multi_sig_signers()",
+    "steps": [
+      "Call for multi-sig user",
+      "Parse signer list",
+      "Check threshold",
+      "Verify signer addresses"
+    ],
+    "passes": false
+  },
+  {
+    "id": 96,
+    "category": "info-api",
+    "description": "query_user_dex_abstraction_state()",
+    "steps": [
+      "Call for user",
+      "Parse DEX abstraction status",
+      "Check enabled flag"
+    ],
+    "passes": false
+  },
+  {
+    "id": 97,
+    "category": "info-api",
+    "description": "query_spot_deploy_auction_status()",
+    "steps": [
+      "Call for user",
+      "Parse auction info",
+      "Check deployment status",
+      "Verify token details"
+    ],
+    "passes": false
+  },
+  {
+    "id": 98,
+    "category": "info-api",
+    "description": "query_perp_deploy_auction_status()",
+    "steps": [
+      "Call endpoint",
+      "Parse perp auction info",
+      "Check deployment queue",
+      "Verify gas costs"
+    ],
+    "passes": false
+  },
+  {
+    "id": 99,
+    "category": "info-api",
+    "description": "Metadata caching with 5min TTL",
+    "steps": [
+      "Call meta() first time",
+      "Verify cache populated",
+      "Call again within TTL",
+      "Verify cache hit",
+      "Wait for TTL expiry",
+      "Verify refresh"
+    ],
+    "passes": false
+  },
+  {
+    "id": 100,
+    "category": "info-api",
+    "description": "Background metadata refresh",
+    "steps": [
+      "Enable background refresh",
+      "Wait for refresh interval",
+      "Verify meta updated",
+      "Check no user request needed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 101,
+    "category": "exchange-api",
+    "description": "order() place limit GTC order",
+    "steps": [
+      "Create limit order params: symbol=ETH, is_buy=fal, sz=0.5, limit_px=3000",
+      "Set order_type to {limit: {tif: 'Gtc'}}",
+      "Set reduce_only=false",
+      "Generate optional cloid",
+      "Call order() method",
+      "Verify response status is 'ok'",
+      "Extract order ID from response",
+      "Query order status via open_orders",
+      "Verify order appears in book",
+      "Cancel order to cleanup",
+      "Verify cancellation successful"
+    ],
+    "passes": true
+  },
+  {
+    "id": 102,
+    "category": "exchange-api",
+    "description": "order() place limit IOC order",
+    "steps": [
+      "Create IOC order",
+      "Submit order",
+      "Verify immediate fill or cancel",
+      "Check response status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 103,
+    "category": "exchange-api",
+    "description": "order() place limit ALO order",
+    "steps": [
+      "Create ALO order",
+      "Submit to avoid taker fees",
+      "Verify resting in book",
+      "Check maker status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 104,
+    "category": "exchange-api",
+    "description": "order() with reduce_only flag",
+    "steps": [
+      "Open position first",
+      "Create reduce_only order",
+      "Verify only reduces",
+      "Test with no position fails"
+    ],
+    "passes": false
+  },
+  {
+    "id": 105,
+    "category": "exchange-api",
+    "description": "order() with client order ID (cloid)",
+    "steps": [
+      "Generate Cloid",
+      "Submit order with cloid",
+      "Verify cloid in response",
+      "Query by cloid works"
+    ],
+    "passes": false
+  },
+  {
+    "id": 106,
+    "category": "exchange-api",
+    "description": "order() with builder fee",
+    "steps": [
+      "Create BuilderInfo",
+      "Set builder address",
+      "Set fee rate",
+      "Submit with builder",
+      "Verify fee applied"
+    ],
+    "passes": false
+  },
+  {
+    "id": 107,
+    "category": "exchange-api",
+    "description": "bulk_orders() place multiple orders",
+    "steps": [
+      "Create 5 order requests with different prices",
+      "First order: BTC buy 0.01 @ 49000",
+      "Second order: BTC buy 0.01 @ 48000",
+      "Third order: ETH buy 0.1 @ 2900",
+      "Fourth order: ETH buy 0.1 @ 2800",
+      "Fifth order: BTC sell 0.01 @ 51000",
+      "Set grouping to 'na'",
+      "Call bulk_orders()",
+      "Verify response contains 5 statuses",
+      "Check each order has unique ID",
+      "Verify all orders resting in book",
+      "Cancel all orders to cleanup"
+    ],
+    "passes": false
+  },
+  {
+    "id": 108,
+    "category": "exchange-api",
+    "description": "bulk_orders() with grouping",
+    "steps": [
+      "Create orders with grouping",
+      "Test normalTpsl grouping",
+      "Test positionTpsl grouping",
+      "Verify grouping behavior"
+    ],
+    "passes": false
+  },
+  {
+    "id": 109,
+    "category": "exchange-api",
+    "description": "modify_order() change price",
+    "steps": [
+      "Place initial order",
+      "Get order ID",
+      "Call modify_order()",
+      "Set new price",
+      "Verify modification"
+    ],
+    "passes": false
+  },
+  {
+    "id": 110,
+    "category": "exchange-api",
+    "description": "modify_order() change size",
+    "steps": [
+      "Place initial order",
+      "Modify size only",
+      "Verify size changed",
+      "Check price unchanged"
+    ],
+    "passes": false
+  },
+  {
+    "id": 111,
+    "category": "exchange-api",
+    "description": "bulk_modify_orders_new() batch modify",
+    "steps": [
+      "Place multiple orders",
+      "Create modify requests",
+      "Call bulk_modify()",
+      "Verify all modified"
+    ],
+    "passes": false
+  },
+  {
+    "id": 112,
+    "category": "exchange-api",
+    "description": "market_open() with slippage",
+    "steps": [
+      "Set market order params: symbol=BTC, is_buy=fal, sz=0.01",
+      "Set slippage tolerance to 0.5%",
+      "Get current mid price for reference",
+      "Call market_open()",
+      "Verify response status is 'ok'",
+      "Extract fill price from response",
+      "Verify fill price within slippage of mid",
+      "Check position size increased by 0.01",
+      "Verify no resting order left",
+      "Calculate effective slippage",
+      "Close position to cleanup"
+    ],
+    "passes": false
+  },
+  {
+    "id": 113,
+    "category": "exchange-api",
+    "description": "market_close() close position",
+    "steps": [
+      "Open position first",
+      "Call market_close()",
+      "Set slippage",
+      "Verify position closed",
+      "Check fill details"
+    ],
+    "passes": false
+  },
+  {
+    "id": 114,
+    "category": "exchange-api",
+    "description": "cancel() by order ID",
+    "steps": [
+      "Place order",
+      "Get order ID",
+      "Call cancel()",
+      "Verify cancellation",
+      "Check order status"
+    ],
+    "passes": false
+  },
+  {
+    "id": 115,
+    "category": "exchange-api",
+    "description": "cancel_by_cloid() using client ID",
+    "steps": [
+      "Place order with cloid",
+      "Call cancel_by_cloid()",
+      "Verify cancellation",
+      "Check no longer active"
+    ],
+    "passes": false
+  },
+  {
+    "id": 116,
+    "category": "exchange-api",
+    "description": "bulk_cancel() multiple orders",
+    "steps": [
+      "Place 5 orders",
+      "Create cancel requests",
+      "Call bulk_cancel()",
+      "Verify all cancelled"
+    ],
+    "passes": false
+  },
+  {
+    "id": 117,
+    "category": "exchange-api",
+    "description": "bulk_cancel_by_cloid() batch cancel",
+    "steps": [
+      "Place orders with cloids",
+      "Call bulk_cancel_by_cloid()",
+      "Verify all cancelled"
+    ],
+    "passes": false
+  },
+  {
+    "id": 118,
+    "category": "exchange-api",
+    "description": "schedule_cancel() timed cancellation",
+    "steps": [
+      "Set cancel time",
+      "Call schedule_cancel()",
+      "Verify scheduled",
+      "Wait for trigger",
+      "Check orders cancelled"
+    ],
+    "passes": false
+  },
+  {
+    "id": 119,
+    "category": "exchange-api",
+    "description": "update_leverage() change leverage",
+    "steps": [
+      "Set new leverage value",
+      "Specify cross/isolated",
+      "Call update_leverage()",
+      "Verify leverage changed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 120,
+    "category": "exchange-api",
+    "description": "update_isolated_margin() adjust margin",
+    "steps": [
+      "Set isolated mode first",
+      "Call update_isolated_margin()",
+      "Add margin amount",
+      "Verify margin increased"
+    ],
+    "passes": false
+  },
+  {
+    "id": 121,
+    "category": "exchange-api",
+    "description": "usd_transfer() send USD",
+    "steps": [
+      "Set destination address to valid 0x format",
+      "Set amount to 100 USD",
+      "Verify sender has sufficient balance",
+      "Call usd_transfer()",
+      "Verify response status is 'ok'",
+      "Check sender balance decreased by 100",
+      "Wait for settlement (may be instant)",
+      "Query destination balance",
+      "Verify destination received 100",
+      "Check transaction in ledger updates",
+      "Verify transfer appears in user_fills"
+    ],
+    "passes": false
+  },
+  {
+    "id": 122,
+    "category": "exchange-api",
+    "description": "spot_transfer() send spot token",
+    "steps": [
+      "Set destination",
+      "Set token and amount",
+      "Call spot_transfer()",
+      "Verify token transferred"
+    ],
+    "passes": false
+  },
+  {
+    "id": 123,
+    "category": "exchange-api",
+    "description": "usd_class_transfer() perp to spot",
+    "steps": [
+      "Set amount",
+      "Set to_perp=false",
+      "Call usd_class_transfer()",
+      "Verify funds moved"
+    ],
+    "passes": false
+  },
+  {
+    "id": 124,
+    "category": "exchange-api",
+    "description": "send_asset() cross-dex transfer",
+    "steps": [
+      "Set source and dest dex",
+      "Set token and amount",
+      "Call send_asset()",
+      "Verify transfer complete"
+    ],
+    "passes": false
+  },
+  {
+    "id": 125,
+    "category": "exchange-api",
+    "description": "vault_usd_transfer() deposit to vault",
+    "steps": [
+      "Set vault address",
+      "Set is_deposit=true",
+      "Set amount",
+      "Call vault_usd_transfer()",
+      "Verify deposited"
+    ],
+    "passes": false
+  },
+  {
+    "id": 126,
+    "category": "exchange-api",
+    "description": "vault_usd_transfer() withdraw from vault",
+    "steps": [
+      "Set vault address",
+      "Set is_deposit=false",
+      "Set amount",
+      "Call vault_usd_transfer()",
+      "Verify withdrawn"
+    ],
+    "passes": false
+  },
+  {
+    "id": 127,
+    "category": "exchange-api",
+    "description": "sub_account_transfer() to sub-account",
+    "steps": [
+      "Set sub-account user",
+      "Set is_deposit=true",
+      "Set USD amount",
+      "Call sub_account_transfer()",
+      "Verify transferred"
+    ],
+    "passes": false
+  },
+  {
+    "id": 128,
+    "category": "exchange-api",
+    "description": "sub_account_spot_transfer()",
+    "steps": [
+      "Set sub-account",
+      "Set token and amount",
+      "Call sub_account_spot_transfer()",
+      "Verify token moved"
+    ],
+    "passes": false
+  },
+  {
+    "id": 129,
+    "category": "exchange-api",
+    "description": "withdraw_from_bridge() to L1",
+    "steps": [
+      "Set destination L1 address",
+      "Set amount",
+      "Call withdraw_from_bridge()",
+      "Verify withdrawal initiated"
+    ],
+    "passes": false
+  },
+  {
+    "id": 130,
+    "category": "exchange-api",
+    "description": "approve_agent() create API key",
+    "steps": [
+      "Call approve_agent()",
+      "Get agent private key",
+      "Verify agent authorized",
+      "Test agent can trade"
+    ],
+    "passes": false
+  },
+  {
+    "id": 131,
+    "category": "exchange-api",
+    "description": "approve_agent() with name",
+    "steps": [
+      "Set agent name 'persist'",
+      "Call approve_agent(name)",
+      "Verify named agent created",
+      "Check extra_agents lists it"
+    ],
+    "passes": false
+  },
+  {
+    "id": 132,
+    "category": "exchange-api",
+    "description": "approve_builder_fee() authorize builder",
+    "steps": [
+      "Set builder address",
+      "Set max fee rate",
+      "Call approve_builder_fee()",
+      "Verify approval"
+    ],
+    "passes": false
+  },
+  {
+    "id": 133,
+    "category": "exchange-api",
+    "description": "set_referrer() set referral code",
+    "steps": [
+      "Get referral code",
+      "Call set_referrer(code)",
+      "Verify referrer set",
+      "Check referral state"
+    ],
+    "passes": false
+  },
+  {
+    "id": 134,
+    "category": "exchange-api",
+    "description": "create_sub_account() new sub-account",
+    "steps": [
+      "Set sub-account name",
+      "Call create_sub_account()",
+      "Verify sub-account created",
+      "Check in sub_accounts list"
+    ],
+    "passes": false
+  },
+  {
+    "id": 135,
+    "category": "exchange-api",
+    "description": "convert_to_multi_sig_user() setup",
+    "steps": [
+      "Prepare list of 3 authorized user addresses",
+      "Set threshold to 2 (2-of-3 multi-sig)",
+      "Call convert_to_multi_sig_user()",
+      "Verify response status is 'ok'",
+      "Query user_to_multi_sig_signers()",
+      "Verify 3 signers listed",
+      "Verify threshold is 2",
+      "Test single signature fails",
+      "Collect 2 signatures for action",
+      "Submit multi-sig action",
+      "Verify action executes successfully",
+      "Test 3 signatures also works"
+    ],
+    "passes": false
+  },
+  {
+    "id": 136,
+    "category": "exchange-api",
+    "description": "multi_sig() execute multi-sig action",
+    "steps": [
+      "Create inner action",
+      "Collect required signatures",
+      "Call multi_sig()",
+      "Verify execution",
+      "Check threshold satisfied"
+    ],
+    "passes": false
+  },
+  {
+    "id": 137,
+    "category": "exchange-api",
+    "description": "token_delegate() stake tokens",
+    "steps": [
+      "Set validator address",
+      "Set wei amount",
+      "Set is_undelegate=false",
+      "Call token_delegate()",
+      "Verify delegation"
+    ],
+    "passes": false
+  },
+  {
+    "id": 138,
+    "category": "exchange-api",
+    "description": "token_delegate() unstake tokens",
+    "steps": [
+      "Have existing delegation",
+      "Set is_undelegate=true",
+      "Call token_delegate()",
+      "Verify undelegation"
+    ],
+    "passes": false
+  },
+  {
+    "id": 139,
+    "category": "exchange-api",
+    "description": "agent_enable_dex_abstraction()",
+    "steps": [
+      "Call agent_enable_dex_abstraction()",
+      "Verify enabled for agent",
+      "Check DEX abstraction state"
+    ],
+    "passes": false
+  },
+  {
+    "id": 140,
+    "category": "exchange-api",
+    "description": "user_dex_abstraction() toggle",
+    "steps": [
+      "Set user address",
+      "Set enabled flag",
+      "Call user_dex_abstraction()",
+      "Verify state changed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 141,
+    "category": "exchange-api",
+    "description": "spot_deploy_register_token()",
+    "steps": [
+      "Set token name",
+      "Set sz_decimals",
+      "Set wei_decimals",
+      "Set max_gas",
+      "Call spot_deploy_register_token()",
+      "Verify registration"
+    ],
+    "passes": false
+  },
+  {
+    "id": 142,
+    "category": "exchange-api",
+    "description": "spot_deploy_user_genesis()",
+    "steps": [
+      "Set token",
+      "Set user allocations",
+      "Call spot_deploy_user_genesis()",
+      "Verify allocation"
+    ],
+    "passes": false
+  },
+  {
+    "id": 143,
+    "category": "exchange-api",
+    "description": "spot_deploy_genesis()",
+    "steps": [
+      "Set token",
+      "Set max_supply",
+      "Set no_hyperliquidity",
+      "Call spot_deploy_genesis()"
+    ],
+    "passes": false
+  },
+  {
+    "id": 144,
+    "category": "exchange-api",
+    "description": "spot_deploy_register_spot()",
+    "steps": [
+      "Set base_token",
+      "Set quote_token",
+      "Call spot_deploy_register_spot()",
+      "Verify pair created"
+    ],
+    "passes": false
+  },
+  {
+    "id": 145,
+    "category": "exchange-api",
+    "description": "spot_deploy_register_hyperliquidity()",
+    "steps": [
+      "Set spot pair",
+      "Set start_px",
+      "Set order parameters",
+      "Call register_hyperliquidity()"
+    ],
+    "passes": false
+  },
+  {
+    "id": 146,
+    "category": "exchange-api",
+    "description": "perp_deploy_register_asset()",
+    "steps": [
+      "Set dex",
+      "Set coin params",
+      "Set oracle_px",
+      "Set margin_table_id",
+      "Call perp_deploy_register_asset()"
+    ],
+    "passes": false
+  },
+  {
+    "id": 147,
+    "category": "exchange-api",
+    "description": "perp_deploy_set_oracle()",
+    "steps": [
+      "Set dex",
+      "Set oracle_pxs",
+      "Set mark_pxs",
+      "Call perp_deploy_set_oracle()"
+    ],
+    "passes": false
+  },
+  {
+    "id": 148,
+    "category": "exchange-api",
+    "description": "c_signer_unjail_self()",
+    "steps": [
+      "Have jailed signer",
+      "Call c_signer_unjail_self()",
+      "Verify unjailed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 149,
+    "category": "exchange-api",
+    "description": "c_validator_register()",
+    "steps": [
+      "Set node_ip",
+      "Set name and description",
+      "Set commission_bps",
+      "Call c_validator_register()"
+    ],
+    "passes": false
+  },
+  {
+    "id": 150,
+    "category": "exchange-api",
+    "description": "use_big_blocks() EVM setting",
+    "steps": [
+      "Set enable flag",
+      "Call use_big_blocks()",
+      "Verify EVM setting changed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 151,
+    "category": "websocket",
+    "description": "Subscribe to allMids channel",
+    "steps": [
+      "Create WebSocket client",
+      "Connect to wss://api.hyperliquid.xyz/ws",
+      "Send subscribe message for allMids",
+      "Receive subscription confirmation",
+      "Receive first allMids update",
+      "Parse coin prices from update",
+      "Verify BTC price present",
+      "Verify ETH price present",
+      "Wait for next update (typically <1s)",
+      "Verify prices changed or same",
+      "Unsubscribe from channel",
+      "Verify no more updates received"
+    ],
+    "passes": false
+  },
+  {
+    "id": 152,
+    "category": "websocket",
+    "description": "Subscribe to l2Book channel",
+    "steps": [
+      "Connect to WebSocket",
+      "Subscribe to BTC l2Book channel",
+      "Receive initial snapshot with bids/asks",
+      "Parse bid levels array",
+      "Parse ask levels array",
+      "Verify bids sorted descending by price",
+      "Verify asks sorted ascending by price",
+      "Wait for incremental update",
+      "Apply delta to local book",
+      "Verify book remains consistent",
+      "Check spread is positive",
+      "Unsubscribe and cleanup"
+    ],
+    "passes": false
+  },
+  {
+    "id": 153,
+    "category": "websocket",
+    "description": "Subscribe to trades channel",
+    "steps": [
+      "Connect WebSocket",
+      "Subscribe to BTC trades",
+      "Receive trade events",
+      "Verify price/size/side",
+      "Check timestamp format"
+    ],
+    "passes": false
+  },
+  {
+    "id": 154,
+    "category": "websocket",
+    "description": "Subscribe to bbo channel",
+    "steps": [
+      "Connect WebSocket",
+      "Subscribe to BTC bbo",
+      "Receive best bid/offer",
+      "Verify spread calculation"
+    ],
+    "passes": false
+  },
+  {
+    "id": 155,
+    "category": "websocket",
+    "description": "Subscribe to candle channel",
+    "steps": [
+      "Connect WebSocket",
+      "Subscribe with interval",
+      "Receive candle updates",
+      "Verify OHLCV data"
+    ],
+    "passes": false
+  },
+  {
+    "id": 156,
+    "category": "websocket",
+    "description": "Subscribe to userEvents channel",
+    "steps": [
+      "Connect with user address",
+      "Subscribe to userEvents",
+      "Receive trade events",
+      "Receive order updates",
+      "Verify user-specific data"
+    ],
+    "passes": false
+  },
+  {
+    "id": 157,
+    "category": "websocket",
+    "description": "Subscribe to userFills channel",
+    "steps": [
+      "Connect with user",
+      "Subscribe to userFills",
+      "Place order that fills",
+      "Receive fill notification"
+    ],
+    "passes": false
+  },
+  {
+    "id": 158,
+    "category": "websocket",
+    "description": "Subscribe to orderUpdates channel",
+    "steps": [
+      "Connect with user",
+      "Subscribe to orderUpdates",
+      "Place and cancel order",
+      "Receive status updates"
+    ],
+    "passes": false
+  },
+  {
+    "id": 159,
+    "category": "websocket",
+    "description": "Subscribe to userFundings channel",
+    "steps": [
+      "Connect with user",
+      "Subscribe to userFundings",
+      "Wait for funding event",
+      "Receive funding notification"
+    ],
+    "passes": false
+  },
+  {
+    "id": 160,
+    "category": "websocket",
+    "description": "Subscribe to userNonFundingLedgerUpdates",
+    "steps": [
+      "Connect with user",
+      "Subscribe to channel",
+      "Trigger ledger update",
+      "Receive notification"
+    ],
+    "passes": false
+  },
+  {
+    "id": 161,
+    "category": "websocket",
+    "description": "Subscribe to webData2 channel",
+    "steps": [
+      "Connect with user",
+      "Subscribe to webData2",
+      "Receive web interface data",
+      "Verify data structure"
+    ],
+    "passes": false
+  },
+  {
+    "id": 162,
+    "category": "websocket",
+    "description": "Subscribe to activeAssetCtx",
+    "steps": [
+      "Connect WebSocket",
+      "Subscribe with coin",
+      "Receive asset context",
+      "Verify funding rate"
+    ],
+    "passes": false
+  },
+  {
+    "id": 163,
+    "category": "websocket",
+    "description": "Subscribe to activeAssetData",
+    "steps": [
+      "Connect with user and coin",
+      "Subscribe to activeAssetData",
+      "Receive user asset data",
+      "Verify position info"
+    ],
+    "passes": false
+  },
+  {
+    "id": 164,
+    "category": "websocket",
+    "description": "Unsubscribe from channel",
+    "steps": [
+      "Subscribe to channel",
+      "Receive initial data",
+      "Send unsubscribe",
+      "Verify no more updates"
+    ],
+    "passes": false
+  },
+  {
+    "id": 165,
+    "category": "websocket",
+    "description": "Multiple simultaneous subscriptions",
+    "steps": [
+      "Connect to WebSocket",
+      "Subscribe to allMids channel",
+      "Subscribe to BTC l2Book channel",
+      "Subscribe to ETH l2Book channel",
+      "Subscribe to BTC trades channel",
+      "Receive messages from multiple channels",
+      "Verify allMids messages routed correctly",
+      "Verify BTC l2Book messages identified",
+      "Verify ETH l2Book messages identified",
+      "Verify trades messages handled",
+      "Check no message mix-up",
+      "Unsubscribe all and cleanup"
+    ],
+    "passes": false
+  },
+  {
+    "id": 166,
+    "category": "websocket",
+    "description": "Message callback routing",
+    "steps": [
+      "Register callback for l2Book",
+      "Register callback for trades",
+      "Receive messages",
+      "Verify correct callback called"
+    ],
+    "passes": false
+  },
+  {
+    "id": 167,
+    "category": "websocket",
+    "description": "Handle pong response",
+    "steps": [
+      "Send ping message",
+      "Receive pong response",
+      "Verify connection alive"
+    ],
+    "passes": false
+  },
+  {
+    "id": 168,
+    "category": "websocket",
+    "description": "Reconnection after network drop",
+    "steps": [
+      "Establish WebSocket connection",
+      "Subscribe to allMids channel",
+      "Receive initial data stream",
+      "Simulate network drop (close socket)",
+      "Verify client detects disconnection",
+      "Wait for reconnection attempt",
+      "Verify connection re-established",
+      "Check allMids resubscribed automatically",
+      "Verify data flow resumes",
+      "Check no duplicate subscriptions",
+      "Verify message sequence continues",
+      "Test multiple reconnections"
+    ],
+    "passes": false
+  },
+  {
+    "id": 169,
+    "category": "websocket",
+    "description": "Exponential backoff on reconnect",
+    "steps": [
+      "Establish connection",
+      "Force disconnect",
+      "Block reconnect first attempt",
+      "Verify delay increases",
+      "Check max backoff respected"
+    ],
+    "passes": false
+  },
+  {
+    "id": 170,
+    "category": "websocket",
+    "description": "Zero-copy message passing to Python",
+    "steps": [
+      "Receive WebSocket message",
+      "Pass to Python callback",
+      "Verify no copy made",
+      "Measure latency"
+    ],
+    "passes": false
+  },
+  {
+    "id": 171,
+    "category": "pyo3",
+    "description": "Python module import",
+    "steps": [
+      "Import hyperliquid_rs",
+      "Verify module loads",
+      "Check _core submodule",
+      "List available classes"
+    ],
+    "passes": false
+  },
+  {
+    "id": 172,
+    "category": "pyo3",
+    "description": "HyperliquidClient initialization",
+    "steps": [
+      "Create client with config",
+      "Verify Rust core initialized",
+      "Check async runtime started"
+    ],
+    "passes": false
+  },
+  {
+    "id": 173,
+    "category": "pyo3",
+    "description": "Async function call from Python",
+    "steps": [
+      "Import hyperliquid_rs module in Python",
+      "Create async function to test",
+      "Instantiate HyperliquidClient with config",
+      "Call await client.get_meta()",
+      "Verify return type is Meta",
+      "Check universe field is list",
+      "Verify at least one asset in universe",
+      "Extract first asset info",
+      "Check name field exists",
+      "Check szDecimals field exists",
+      "Use asyncio.run() to execute",
+      "Verify no memory leaks"
+    ],
+    "passes": false
+  },
+  {
+    "id": 174,
+    "category": "pyo3",
+    "description": "Sync function wrapper",
+    "steps": [
+      "Call client.sync.get_meta()",
+      "Verify blocking call works",
+      "Receive same result"
+    ],
+    "passes": false
+  },
+  {
+    "id": 175,
+    "category": "pyo3",
+    "description": "Order struct Python to Rust",
+    "steps": [
+      "Create Python Order object with all fields",
+      "Set symbol to 'BTC'",
+      "Set is_buy to True",
+      "Set size to 0.01 (Decimal)",
+      "Set limit_px to 50000.0",
+      "Set order_type to GTC limit",
+      "Pass Order to place_order()",
+      "Verify Rust receives correct symbol",
+      "Verify Rust receives correct size",
+      "Verify price precision preserved",
+      "Check order_type enum mapped correctly",
+      "Verify response returns to Python"
+    ],
+    "passes": false
+  },
+  {
+    "id": 176,
+    "category": "pyo3",
+    "description": "Response struct Rust to Python",
+    "steps": [
+      "Call Rust function",
+      "Receive Python object",
+      "Access fields via attributes",
+      "Verify types correct"
+    ],
+    "passes": false
+  },
+  {
+    "id": 177,
+    "category": "pyo3",
+    "description": "Error propagation to Python",
+    "steps": [
+      "Trigger Rust error",
+      "Catch Python exception",
+      "Verify error type",
+      "Check error message"
+    ],
+    "passes": false
+  },
+  {
+    "id": 178,
+    "category": "pyo3",
+    "description": "Exception hierarchy mapping",
+    "steps": [
+      "Trigger NetworkError",
+      "Catch as HyperliquidError",
+      "Trigger ValidationError",
+      "Verify inheritance"
+    ],
+    "passes": false
+  },
+  {
+    "id": 179,
+    "category": "pyo3",
+    "description": "Callback function registration",
+    "steps": [
+      "Define Python callback",
+      "Register for WebSocket",
+      "Receive message",
+      "Verify callback called"
+    ],
+    "passes": false
+  },
+  {
+    "id": 180,
+    "category": "pyo3",
+    "description": "Async generator for streams",
+    "steps": [
+      "Subscribe to stream",
+      "async for message in stream",
+      "Verify messages received",
+      "Check cleanup on break"
+    ],
+    "passes": false
+  },
+  {
+    "id": 181,
+    "category": "pyo3",
+    "description": "Private key never exposed",
+    "steps": [
+      "Initialize client with private key string",
+      "Verify client initialized successfully",
+      "Try to access client.private_key attribute",
+      "Verify AttributeError raised",
+      "Try to access via client._core.key",
+      "Verify key not accessible",
+      "Call place_order() requiring signature",
+      "Verify order signed correctly",
+      "Verify signature is valid",
+      "Check no key in log output",
+      "Verify key zeroized on client drop"
+    ],
+    "passes": false
+  },
+  {
+    "id": 182,
+    "category": "pyo3",
+    "description": "Memory management across boundary",
+    "steps": [
+      "Create large response",
+      "Pass to Python",
+      "Delete Python reference",
+      "Verify Rust memory freed"
+    ],
+    "passes": false
+  },
+  {
+    "id": 183,
+    "category": "pyo3",
+    "description": "GIL handling for parallel ops",
+    "steps": [
+      "Release GIL for Rust ops",
+      "Run parallel Python code",
+      "Verify no deadlock",
+      "Check performance"
+    ],
+    "passes": false
+  },
+  {
+    "id": 184,
+    "category": "pyo3",
+    "description": "Type hints generation",
+    "steps": [
+      "Import module",
+      "Check __annotations__",
+      "Verify mypy compatibility",
+      "Test IDE autocomplete"
+    ],
+    "passes": false
+  },
+  {
+    "id": 185,
+    "category": "pyo3",
+    "description": "Enum conversion",
+    "steps": [
+      "Pass Python enum",
+      "Receive in Rust",
+      "Return Rust enum",
+      "Verify Python enum"
+    ],
+    "passes": false
+  },
+  {
+    "id": 186,
+    "category": "python",
+    "description": "Pydantic model for Order",
+    "steps": [
+      "Create Order model",
+      "Validate with pydantic",
+      "Test serialization",
+      "Test deserialization"
+    ],
+    "passes": true
+  },
+  {
+    "id": 187,
+    "category": "python",
+    "description": "Pydantic model for Position",
+    "steps": [
+      "Create Position model",
+      "Parse from API response",
+      "Validate field types",
+      "Test computed fields"
+    ],
+    "passes": false
+  },
+  {
+    "id": 188,
+    "category": "python",
+    "description": "Client context manager",
+    "steps": [
+      "Use async with client",
+      "Verify connection opened",
+      "Exit context",
+      "Verify cleanup"
+    ],
+    "passes": false
+  },
+  {
+    "id": 189,
+    "category": "python",
+    "description": "Sync client wrapper",
+    "steps": [
+      "Create sync client",
+      "Call blocking methods",
+      "Verify thread safety"
+    ],
+    "passes": false
+  },
+  {
+    "id": 190,
+    "category": "python",
+    "description": "Type hints pass mypy strict",
+    "steps": [
+      "Run mypy --strict",
+      "Verify no errors",
+      "Check all public functions",
+      "Test generic types"
+    ],
+    "passes": false
+  },
+  {
+    "id": 191,
+    "category": "python",
+    "description": "Backwards compatibility layer",
+    "steps": [
+      "Import from compat module",
+      "Use old SDK API",
+      "Verify same behavior"
+    ],
+    "passes": false
+  },
+  {
+    "id": 192,
+    "category": "python",
+    "description": "Example: basic_order.py",
+    "steps": [
+      "Run example script",
+      "Verify order placed",
+      "Verify order cancelled",
+      "Check output format"
+    ],
+    "passes": false
+  },
+  {
+    "id": 193,
+    "category": "python",
+    "description": "Example: basic_ws.py",
+    "steps": [
+      "Run WebSocket example",
+      "Receive market data",
+      "Verify callback works",
+      "Clean shutdown"
+    ],
+    "passes": false
+  },
+  {
+    "id": 194,
+    "category": "python",
+    "description": "CLI tool for quick ops",
+    "steps": [
+      "Run hyperliquid-rs cli",
+      "Test order command",
+      "Test cancel command",
+      "Test positions query"
+    ],
+    "passes": false
+  },
+  {
+    "id": 195,
+    "category": "python",
+    "description": "Structured logging output",
+    "steps": [
+      "Enable debug logging",
+      "Make API call",
+      "Verify JSON log format",
+      "Check trace IDs"
+    ],
+    "passes": false
+  },
+  {
+    "id": 196,
+    "category": "performance",
+    "description": "Order placement latency <50ms P99",
+    "steps": [
+      "Warm up connection with 10 requests",
+      "Create test order params",
+      "Start timer",
+      "Place 1000 orders sequentially",
+      "Record latency for each order",
+      "Calculate P50 latency",
+      "Calculate P95 latency",
+      "Calculate P99 latency",
+      "Verify P99 < 50ms",
+      "Compare to Python SDK baseline",
+      "Verify no outliers > 100ms",
+      "Clean up test orders"
+    ],
+    "passes": false
+  },
+  {
+    "id": 197,
+    "category": "performance",
+    "description": "WebSocket message processing <1ms",
+    "steps": [
+      "Subscribe to high-freq channel",
+      "Measure message latency",
+      "Calculate P99",
+      "Verify <1ms"
+    ],
+    "passes": false
+  },
+  {
+    "id": 198,
+    "category": "performance",
+    "description": "JSON parsing 10x faster",
+    "steps": [
+      "Parse 10000 responses",
+      "Measure Rust time",
+      "Measure Python json time",
+      "Verify 10x improvement"
+    ],
+    "passes": false
+  },
+  {
+    "id": 199,
+    "category": "performance",
+    "description": "Memory usage <100MB",
+    "steps": [
+      "Start memory profiler",
+      "Initialize HyperliquidClient",
+      "Record baseline RSS memory",
+      "Subscribe to 5 WebSocket channels",
+      "Process 10000 messages",
+      "Place and cancel 100 orders",
+      "Query user state 100 times",
+      "Record peak RSS memory",
+      "Verify peak < 100MB",
+      "Check for memory leaks via diff",
+      "Run garbage collection",
+      "Verify memory returns to near baseline"
+    ],
+    "passes": false
+  },
+  {
+    "id": 200,
+    "category": "performance",
+    "description": "Connection pool efficiency",
+    "steps": [
+      "Make 10000 requests",
+      "Measure connection reuse",
+      "Verify pool stats",
+      "Check no connection leaks"
+    ],
+    "passes": false
+  },
+  {
+    "id": 201,
+    "category": "performance",
+    "description": "Criterion benchmarks pass",
+    "steps": [
+      "Run cargo bench",
+      "Verify all benchmarks pass",
+      "Check no regressions",
+      "Compare to baseline"
+    ],
+    "passes": false
+  },
+  {
+    "id": 202,
+    "category": "security",
+    "description": "Private key mlock protection",
+    "steps": [
+      "Load private key",
+      "Verify mlock applied",
+      "Check key not in swap",
+      "Test on key drop"
+    ],
+    "passes": false
+  },
+  {
+    "id": 203,
+    "category": "security",
+    "description": "TLS 1.3 enforcement",
+    "steps": [
+      "Connect to API",
+      "Verify TLS version",
+      "Reject TLS 1.2",
+      "Check cipher suite"
+    ],
+    "passes": false
+  },
+  {
+    "id": 204,
+    "category": "security",
+    "description": "Input validation rejects bad data",
+    "steps": [
+      "Send negative price",
+      "Verify ValidationError",
+      "Send invalid address",
+      "Verify rejection"
+    ],
+    "passes": false
+  },
+  {
+    "id": 205,
+    "category": "security",
+    "description": "Rate limit self-protection",
+    "steps": [
+      "Configure rate limit",
+      "Exceed limit",
+      "Verify local throttle",
+      "Check no API ban"
+    ],
+    "passes": false
+  },
+  {
+    "id": 206,
+    "category": "security",
+    "description": "Audit log integrity",
+    "steps": [
+      "Enable audit logging",
+      "Place test order",
+      "Verify audit log entry created",
+      "Check timestamp recorded",
+      "Check operation is 'place_order'",
+      "Check payload JSON recorded",
+      "Check response recorded",
+      "Verify checksum computed",
+      "Tamper with log entry",
+      "Run integrity check",
+      "Verify tamper detected",
+      "Restore and verify check passes"
+    ],
+    "passes": false
+  },
+  {
+    "id": 207,
+    "category": "security",
+    "description": "Read-only mode blocks writes",
+    "steps": [
+      "Enable read-only mode",
+      "Try place_order()",
+      "Verify rejected",
+      "Query methods work"
+    ],
+    "passes": false
+  },
+  {
+    "id": 208,
+    "category": "security",
+    "description": "Dry-run mode validates only",
+    "steps": [
+      "Enable dry-run mode",
+      "Call place_order()",
+      "Verify validation runs",
+      "Verify no API call made"
+    ],
+    "passes": false
+  },
+  {
+    "id": 209,
+    "category": "security",
+    "description": "Testnet mode uses correct endpoint",
+    "steps": [
+      "Enable testnet mode",
+      "Make API call",
+      "Verify testnet URL used",
+      "Check chain ID"
+    ],
+    "passes": false
+  },
+  {
+    "id": 210,
+    "category": "security",
+    "description": "cargo audit passes",
+    "steps": [
+      "Run cargo audit",
+      "Verify no vulnerabilities",
+      "Check advisories",
+      "Update if needed"
+    ],
+    "passes": false
+  }
+]
