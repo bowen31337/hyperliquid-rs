@@ -9,9 +9,10 @@ from pydantic import BaseModel, Field
 class AssetMeta(BaseModel):
     """Asset metadata"""
     name: str
-    onlyIsolated: bool
     szDecimals: int
     maxLeverage: int
+    marginTableId: int
+    onlyIsolated: Optional[bool] = None  # Optional since not in current API response
     maxDynamicLeverage: Optional[int] = None
     type: Optional[str] = None
     tokens: Optional[list["AssetMeta"]] = None
@@ -107,7 +108,7 @@ class Order(BaseModel):
 
     class Config:
         """Pydantic configuration"""
-        allow_population_by_field_name = True
+        validate_by_name = True
         json_encoders = {
             float: lambda v: f"{v:.15g}"  # Convert float to string with maximum precision
         }
@@ -245,7 +246,7 @@ class UserStateResponse(BaseModel):
     """Response for user state endpoint"""
     marginSummary: MarginSummary
     crossMarginSummary: Optional[MarginSummary] = None
-    positions: list[Position]
+    positions: list[Position] = []
     withdrawable: str
     assetPositions: list[AssetPosition] = []
 

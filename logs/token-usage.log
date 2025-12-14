@@ -319,3 +319,78 @@
 [2025-12-13 16:01:30] Session 80 ended - 0 tokens, 1 calls
 [2025-12-13 16:01:30] Report saved to hyperliquid-rs/token-consumption-report.json
 [2025-12-13 16:01:34] Session 81 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:04:38] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:04:38] Session 81 ended - 0 tokens, 1 calls
+[2025-12-13 16:04:38] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:04:42] Session 82 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:08:24] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:08:24] Session 82 ended - 0 tokens, 1 calls
+[2025-12-13 16:08:24] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:08:28] Session 83 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:10:43] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:10:43] Session 83 ended - 0 tokens, 1 calls
+[2025-12-13 16:10:43] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:10:47] Session 84 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:13:19] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:13:19] Session 84 ended - 0 tokens, 1 calls
+[2025-12-13 16:13:19] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:13:23] Session 85 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:22:04] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:22:04] Session 85 ended - 0 tokens, 1 calls
+[2025-12-13 16:22:04] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:22:08] Session 86 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:26:54] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:26:54] Session 86 ended - 0 tokens, 1 calls
+[2025-12-13 16:26:54] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:26:58] Session 87 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:30:20] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:30:20] Session 87 ended - 0 tokens, 1 calls
+[2025-12-13 16:30:20] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:30:24] Session 88 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:33:56] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:33:56] Session 88 ended - 0 tokens, 1 calls
+[2025-12-13 16:33:56] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:34:00] Session 89 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:37:44] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:37:44] Session 89 ended - 0 tokens, 1 calls
+[2025-12-13 16:37:44] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:37:48] Session 90 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:38:55] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:38:55] Session 90 ended - 0 tokens, 1 calls
+[2025-12-13 16:38:55] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:38:59] Session 91 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:40:35] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:40:35] Session 91 ended - 0 tokens, 1 calls
+[2025-12-13 16:40:35] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:40:39] Session 92 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:42:00] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:42:00] Session 92 ended - 0 tokens, 1 calls
+[2025-12-13 16:42:00] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:42:04] Session 93 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:44:03] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:44:03] Session 93 ended - 0 tokens, 1 calls
+[2025-12-13 16:44:03] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:44:07] Session 94 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:48:53] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:48:53] Session 94 ended - 0 tokens, 1 calls
+[2025-12-13 16:48:53] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:48:57] Session 95 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:50:14] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:50:14] Session 95 ended - 0 tokens, 1 calls
+[2025-12-13 16:50:14] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:50:18] Session 96 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:52:04] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:52:04] Session 96 ended - 0 tokens, 1 calls
+[2025-12-13 16:52:04] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:52:08] Session 97 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:55:39] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:55:39] Session 97 ended - 0 tokens, 1 calls
+[2025-12-13 16:55:39] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:55:43] Session 98 started - https://api.z.ai/api/anthropic
+[2025-12-13 16:58:08] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 16:58:08] Session 98 ended - 0 tokens, 1 calls
+[2025-12-13 16:58:08] Report saved to hyperliquid-rs/token-consumption-report.json
+[2025-12-13 16:58:12] Session 99 started - https://api.z.ai/api/anthropic
+[2025-12-13 17:02:50] Call: +0 in, +0 out = 0 tokens (session total: 0)
+[2025-12-13 17:02:51] Session 99 ended - 0 tokens, 1 calls
+[2025-12-13 17:02:51] Report saved to hyperliquid-rs/token-consumption-report.json

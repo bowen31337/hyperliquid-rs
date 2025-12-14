@@ -1,0 +1,446 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hyperliquid API",
+    "version": "1.0.0",
+    "description": "Hyperliquid DEX trading API - Rust SDK documentation",
+    "contact": {
+      "name": "Hyperliquid",
+      "url": "https://hyperliquid.xyz"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.hyperliquid.xyz",
+      "description": "Mainnet"
+    },
+    {
+      "url": "https://api.hyperliquid-testnet.xyz",
+      "description": "Testnet"
+    },
+    {
+      "url": "http://localhost:3001",
+      "description": "Local"
+    }
+  ],
+  "paths": {
+    "/info": {
+      "post": {
+        "summary": "Info API - Market data and account queries",
+        "description": "All Info API endpoints use POST with a 'type' field in the request body",
+        "operationId": "info",
+        "tags": ["info"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["meta"],
+                        "description": "Get perpetual asset metadata"
+                      },
+                      "dex": {
+                        "type": "string",
+                        "description": "Optional DEX parameter"
+                      }
+                    },
+                    "required": ["type"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["spotMeta"],
+                        "description": "Get spot asset metadata"
+                      }
+                    },
+                    "required": ["type"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["allMids"],
+                        "description": "Get all mid prices"
+                      },
+                      "dex": {
+                        "type": "string",
+                        "description": "Optional DEX parameter"
+                      }
+                    },
+                    "required": ["type"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["l2Book"],
+                        "description": "Get L2 orderbook snapshot"
+                      },
+                      "coin": {
+                        "type": "string",
+                        "description": "Trading pair (e.g., 'BTC', 'ETH')"
+                      }
+                    },
+                    "required": ["type", "coin"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["candleSnapshot"],
+                        "description": "Get candlestick data"
+                      },
+                      "req": {
+                        "type": "object",
+                        "properties": {
+                          "coin": {"type": "string"},
+                          "interval": {"type": "string"},
+                          "startTime": {"type": "integer"},
+                          "endTime": {"type": "integer"}
+                        }
+                      }
+                    },
+                    "required": ["type", "req"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["clearinghouseState"],
+                        "description": "Get user state (positions, margin)"
+                      },
+                      "user": {
+                        "type": "string",
+                        "pattern": "^0x[a-fA-F0-9]{40}$",
+                        "description": "User wallet address"
+                      },
+                      "dex": {
+                        "type": "string",
+                        "description": "Optional DEX parameter"
+                      }
+                    },
+                    "required": ["type", "user"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["openOrders"],
+                        "description": "Get user's open orders"
+                      },
+                      "user": {
+                        "type": "string",
+                        "pattern": "^0x[a-fA-F0-9]{40}$"
+                      },
+                      "dex": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["type", "user"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["userFills"],
+                        "description": "Get user's trade fills"
+                      },
+                      "user": {
+                        "type": "string",
+                        "pattern": "^0x[a-fA-F0-9]{40}$"
+                      }
+                    },
+                    "required": ["type", "user"]
+                  }
+                ]
+              },
+              "examples": {
+                "meta": {
+                  "summary": "Get metadata",
+                  "value": {"type": "meta"}
+                },
+                "allMids": {
+                  "summary": "Get all mid prices",
+                  "value": {"type": "allMids"}
+                },
+                "l2Book": {
+                  "summary": "Get orderbook",
+                  "value": {"type": "l2Book", "coin": "BTC"}
+                },
+                "userState": {
+                  "summary": "Get user state",
+                  "value": {"type": "clearinghouseState", "user": "0x0000000000000000000000000000000000000000"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Response format varies by request type"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exchange": {
+      "post": {
+        "summary": "Exchange API - Trading and transfer operations",
+        "description": "All Exchange API endpoints require EIP-712 signature",
+        "operationId": "exchange",
+        "tags": ["exchange"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "object",
+                    "description": "Action to execute"
+                  },
+                  "nonce": {
+                    "type": "integer",
+                    "description": "Nonce for request"
+                  },
+                  "signature": {
+                    "type": "object",
+                    "description": "EIP-712 signature"
+                  }
+                },
+                "required": ["action", "nonce", "signature"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "universe": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetMeta"
+            }
+          }
+        }
+      },
+      "AssetMeta": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "BTC"
+          },
+          "szDecimals": {
+            "type": "integer",
+            "example": 8
+          },
+          "maxLeverage": {
+            "type": "integer",
+            "example": 40
+          },
+          "marginTableId": {
+            "type": "integer"
+          }
+        },
+        "required": ["name", "szDecimals", "maxLeverage"]
+      },
+      "UserState": {
+        "type": "object",
+        "properties": {
+          "marginSummary": {
+            "$ref": "#/components/schemas/MarginSummary"
+          },
+          "assetPositions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Position"
+            }
+          }
+        }
+      },
+      "MarginSummary": {
+        "type": "object",
+        "properties": {
+          "accountValue": {
+            "type": "string",
+            "description": "Account value in USD"
+          },
+          "totalMarginUsed": {
+            "type": "string"
+          },
+          "totalNtlPos": {
+            "type": "string"
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "properties": {
+          "coin": {
+            "type": "string"
+          },
+          "szi": {
+            "type": "string",
+            "description": "Position size"
+          },
+          "entryPx": {
+            "type": "string",
+            "description": "Entry price"
+          }
+        }
+      },
+      "L2Book": {
+        "type": "object",
+        "properties": {
+          "levels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "px": {"type": "string"},
+                "sz": {"type": "string"}
+              }
+            }
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "coin": {
+            "type": "string",
+            "example": "BTC"
+          },
+          "is_buy": {
+            "type": "boolean"
+          },
+          "sz": {
+            "type": "string",
+            "example": "0.1"
+          },
+          "limitPx": {
+            "type": "string",
+            "example": "50000"
+          },
+          "orderType": {
+            "type": "string",
+            "enum": ["Limit", "Trigger"]
+          },
+          "cloid": {
+            "type": "string",
+            "description": "Client order ID"
+          }
+        },
+        "required": ["coin", "is_buy", "sz", "limitPx"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "err"
+          },
+          "response": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "data": {
+                "type": "string",
+                "description": "Error message"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "EIP-712 signature required for Exchange API"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "info",
+      "description": "Market data and account queries (read-only)"
+    },
+    {
+      "name": "exchange",
+      "description": "Trading and transfer operations (requires signature)"
+    },
+    {
+      "name": "websocket",
+      "description": "Real-time data subscriptions"
+    }
+  ]
+}
+

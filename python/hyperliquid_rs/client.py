@@ -103,7 +103,11 @@ class HyperliquidClient:
         except ImportError:
             # Fall back to pure Python implementation if Rust module is not available
             try:
-                from ._fallback import PyInfoClient, PyExchangeClient, PyExchangeClientConfig
+                from ._fallback import (
+                    PyExchangeClient,
+                    PyExchangeClientConfig,
+                    PyInfoClient,
+                )
                 # Use a fallback config class
                 class PyExchangeClientConfig:
                     def __init__(self, base_url: str, max_retries: int = 3, timeout: int = 30):
@@ -283,7 +287,7 @@ class HyperliquidClient:
     def get_l2_book(self, coin: str) -> dict[str, Any]:
         """Get L2 order book snapshot"""
         try:
-            response = self._info_client.l2_book(coin)
+            response = self._info_client.l2_book(coin, None)
             return cast(dict[str, Any], json.loads(response))
         except Exception as e:
             raise HyperliquidError(f"Failed to get L2 book: {e}") from e
