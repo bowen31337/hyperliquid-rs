@@ -1,5 +1,11 @@
 # Hyperliquid Rust SDK
 
+[![PyPI version](https://img.shields.io/pypi/v/hyperliquid-rs.svg)](https://pypi.org/project/hyperliquid-rs/)
+[![Python versions](https://img.shields.io/pypi/pyversions/hyperliquid-rs.svg)](https://pypi.org/project/hyperliquid-rs/)
+[![CI](https://github.com/unodigit/hyperliquid-rs/actions/workflows/python-publish.yml/badge.svg)](https://github.com/unodigit/hyperliquid-rs/actions/workflows/python-publish.yml)
+[![Documentation](https://img.shields.io/badge/docs-Swagger%20UI-4ecca3)](https://unodigit.github.io/hyperliquid-rs/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 High-performance Hyperliquid Python SDK with Rust core for maximum performance, memory safety, and low-latency trading operations.
 
 ## Features
@@ -15,10 +21,20 @@ High-performance Hyperliquid Python SDK with Rust core for maximum performance, 
 
 ## Installation
 
-### Prerequisites
+### From PyPI (Recommended)
+
+```bash
+# Install using pip
+pip install hyperliquid-rs
+
+# Or using uv
+uv pip install hyperliquid-rs
+```
+
+### Prerequisites (for building from source)
 
 - **Rust 1.75+**: Install from [rustup.rs](https://rustup.rs/)
-- **Python 3.10+**: Required for Python bindings
+- **Python 3.9+**: Required for Python bindings
 - **uv**: Python package manager (recommended)
   ```bash
   curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -100,9 +116,12 @@ uv run pytest tests/
 cargo test --workspace
 ```
 
-### Swagger UI Documentation
+### API Documentation
 
-**Start Swagger UI Server:**
+**Online Documentation:**
+- 📖 **Swagger UI**: [https://unodigit.github.io/hyperliquid-rs/](https://unodigit.github.io/hyperliquid-rs/)
+
+**Local Documentation Server:**
 ```bash
 # Using the convenience script (recommended)
 ./scripts/start_swagger.sh 8081
@@ -112,7 +131,7 @@ uv pip install pydantic pydantic-settings httpx
 python3 scripts/serve_swagger.py --port 8081
 ```
 
-**Access Swagger UI:**
+**Local Access:**
 - Open http://localhost:8081/docs in your browser
 - OpenAPI spec available at http://localhost:8081/openapi.json
 
@@ -141,18 +160,23 @@ cd ..
 
 ```
 hyperliquid-rs/
+├── .github/
+│   └── workflows/            # GitHub Actions CI/CD
+│       ├── python-publish.yml  # PyPI publishing
+│       └── docs.yml            # API docs deployment
 ├── crates/
 │   ├── hyperliquid-core/     # Core Rust library
 │   ├── hyperliquid-python/   # PyO3 bindings
 │   └── hyperliquid-grpc/     # gRPC server (future)
 ├── python/                   # Python package
 │   └── tests/
-│       ├── integration/     # Integration tests (testnet, etc.)
+│       ├── integration/      # Integration tests (testnet, etc.)
 │       └── ...               # Unit tests
 ├── openapi/                  # OpenAPI specification
 ├── scripts/                  # Build and utility scripts
 │   └── tests/                # Test scripts
 ├── docs/                     # Documentation
+│   ├── api/                  # Swagger UI (GitHub Pages)
 │   ├── implementation/       # Implementation summaries
 │   ├── sessions/             # Session reports
 │   └── reports/              # Project status reports
