@@ -65,12 +65,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
+      - name: Copy pyproject.toml to crate directory
+        run: |
+          cp pyproject.toml crates/hyperliquid-python/
+
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.platform.target }}
           manylinux: ${{ matrix.platform.manylinux }}
-          args: --release --out dist --find-interpreter
+          args: --manifest-path crates/hyperliquid-python/Cargo.toml --release --out dist --find-interpreter
           sccache: 'true'
 
       - name: Upload wheels
@@ -86,11 +90,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Copy pyproject.toml to crate directory
+        run: |
+          cp pyproject.toml crates/hyperliquid-python/
+
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
           command: sdist
-          args: --out dist
+          args: --manifest-path crates/hyperliquid-python/Cargo.toml --out dist
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4
