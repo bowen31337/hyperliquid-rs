@@ -55,8 +55,9 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-action@stable
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
+          toolchain: stable
           targets: ${{ matrix.platform.target == 'aarch64' && matrix.platform.os == 'ubuntu-latest' && 'aarch64-unknown-linux-gnu' || '' }}
 
       - name: Install cross-compilation tools (Linux aarch64)
