@@ -65,9 +65,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
-      - name: Copy pyproject.toml to crate directory
+      - name: Copy package files to crate directory
         run: |
           cp pyproject.toml crates/hyperliquid-python/
+          cp README.md crates/hyperliquid-python/ 2>/dev/null || true
+          cp LICENSE crates/hyperliquid-python/ 2>/dev/null || true
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -90,9 +92,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Copy pyproject.toml to crate directory
+      - name: Copy package files to crate directory
         run: |
           cp pyproject.toml crates/hyperliquid-python/
+          cp README.md crates/hyperliquid-python/ 2>/dev/null || true
+          cp LICENSE crates/hyperliquid-python/ 2>/dev/null || true
 
       - name: Build sdist
         uses: PyO3/maturin-action@v1
