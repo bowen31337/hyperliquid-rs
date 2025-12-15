@@ -443,25 +443,6 @@ mod tests {
         let result = recover_address(&message, &invalid_v_signature);
         assert!(result.is_err());
     }
-}
-        let action = json!({
-            "type": "order",
-            "orders": [{
-                "a": 1,
-                "b": true,
-                "p": "50000.0",
-                "s": "0.1",
-                "r": false,
-                "t": {"limit": {"tif": "Gtc"}}
-            }]
-        });
-
-        let hash = action_hash(&action, None, 12345678, None).unwrap();
-
-        // Should be a 32-byte hash starting with 0x
-        assert!(hash.starts_with("0x"));
-        assert_eq!(hash.len(), 66); // 0x + 64 hex chars
-    }
 
     #[test]
     fn test_construct_phantom_agent() {
